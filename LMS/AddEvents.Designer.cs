@@ -31,30 +31,38 @@ partial class AddEvents
     /// </summary>
     private void InitializeComponent()
     {
-        button1 = new System.Windows.Forms.Button();
+        buttonBack = new System.Windows.Forms.Button();
         button2 = new System.Windows.Forms.Button();
-        label1 = new System.Windows.Forms.Label();
+        labelOrganiser = new System.Windows.Forms.Label();
         label2 = new System.Windows.Forms.Label();
-        textBox1 = new System.Windows.Forms.TextBox();
+        textBoxTitle = new System.Windows.Forms.TextBox();
         label3 = new System.Windows.Forms.Label();
         label4 = new System.Windows.Forms.Label();
         dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
         dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
+        textBoxTickets = new System.Windows.Forms.TextBox();
+        label1 = new System.Windows.Forms.Label();
+        textBoxPrice = new System.Windows.Forms.TextBox();
+        price = new System.Windows.Forms.Label();
+        comboBoxVenue = new System.Windows.Forms.ComboBox();
+        label6 = new System.Windows.Forms.Label();
+        comboBoxCategory = new System.Windows.Forms.ComboBox();
+        label7 = new System.Windows.Forms.Label();
         SuspendLayout();
         // 
-        // button1
+        // buttonBack
         // 
-        button1.Location = new System.Drawing.Point(442, 566);
-        button1.Name = "button1";
-        button1.Size = new System.Drawing.Size(209, 56);
-        button1.TabIndex = 0;
-        button1.Text = "Back to homepage";
-        button1.UseVisualStyleBackColor = true;
-        button1.Click += button1_Click;
+        buttonBack.Location = new System.Drawing.Point(552, 932);
+        buttonBack.Name = "buttonBack";
+        buttonBack.Size = new System.Drawing.Size(209, 56);
+        buttonBack.TabIndex = 0;
+        buttonBack.Text = "Back to homepage";
+        buttonBack.UseVisualStyleBackColor = true;
+        buttonBack.Click += buttonBack_Click_1;
         // 
         // button2
         // 
-        button2.Location = new System.Drawing.Point(442, 479);
+        button2.Location = new System.Drawing.Point(552, 850);
         button2.Name = "button2";
         button2.Size = new System.Drawing.Size(209, 50);
         button2.TabIndex = 1;
@@ -62,16 +70,16 @@ partial class AddEvents
         button2.UseVisualStyleBackColor = true;
         button2.Click += button2_Click;
         // 
-        // label1
+        // labelOrganiser
         // 
-        label1.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)0));
-        label1.Location = new System.Drawing.Point(370, 43);
-        label1.Name = "label1";
-        label1.Size = new System.Drawing.Size(332, 89);
-        label1.TabIndex = 2;
-        label1.Text = "Add events";
-        label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-        label1.Click += label1_Click;
+        labelOrganiser.Font = new System.Drawing.Font("Segoe UI", 14.142858F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)0));
+        labelOrganiser.Location = new System.Drawing.Point(304, 41);
+        labelOrganiser.Name = "labelOrganiser";
+        labelOrganiser.Size = new System.Drawing.Size(720, 89);
+        labelOrganiser.TabIndex = 2;
+        labelOrganiser.Text = "Add events";
+        labelOrganiser.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+        labelOrganiser.Click += label1_Click;
         // 
         // label2
         // 
@@ -81,13 +89,13 @@ partial class AddEvents
         label2.TabIndex = 3;
         label2.Text = "Event name";
         // 
-        // textBox1
+        // textBoxTitle
         // 
-        textBox1.Location = new System.Drawing.Point(364, 227);
-        textBox1.Name = "textBox1";
-        textBox1.Size = new System.Drawing.Size(559, 35);
-        textBox1.TabIndex = 4;
-        textBox1.TextChanged += textBox1_TextChanged;
+        textBoxTitle.Location = new System.Drawing.Point(364, 227);
+        textBoxTitle.Name = "textBoxTitle";
+        textBoxTitle.Size = new System.Drawing.Size(559, 35);
+        textBoxTitle.TabIndex = 4;
+        textBoxTitle.TextChanged += textBox1_TextChanged;
         // 
         // label3
         // 
@@ -114,6 +122,7 @@ partial class AddEvents
         dateTimePicker1.ShowUpDown = true;
         dateTimePicker1.Size = new System.Drawing.Size(268, 35);
         dateTimePicker1.TabIndex = 10;
+        dateTimePicker1.ValueChanged += dateTimePicker1_ValueChanged;
         // 
         // dateTimePicker2
         // 
@@ -121,25 +130,114 @@ partial class AddEvents
         dateTimePicker2.Name = "dateTimePicker2";
         dateTimePicker2.Size = new System.Drawing.Size(268, 35);
         dateTimePicker2.TabIndex = 11;
+        dateTimePicker2.ValueChanged += dateTimePicker2_ValueChanged;
+        // 
+        // textBoxTickets
+        // 
+        textBoxTickets.Location = new System.Drawing.Point(364, 450);
+        textBoxTickets.Name = "textBoxTickets";
+        textBoxTickets.Size = new System.Drawing.Size(268, 35);
+        textBoxTickets.TabIndex = 12;
+        // 
+        // label1
+        // 
+        label1.Location = new System.Drawing.Point(205, 453);
+        label1.Name = "label1";
+        label1.Size = new System.Drawing.Size(153, 35);
+        label1.TabIndex = 13;
+        label1.Text = "Tickets";
+        // 
+        // textBoxPrice
+        // 
+        textBoxPrice.Location = new System.Drawing.Point(364, 539);
+        textBoxPrice.Name = "textBoxPrice";
+        textBoxPrice.Size = new System.Drawing.Size(268, 35);
+        textBoxPrice.TabIndex = 14;
+        // 
+        // price
+        // 
+        price.Location = new System.Drawing.Point(205, 539);
+        price.Name = "price";
+        price.Size = new System.Drawing.Size(153, 35);
+        price.TabIndex = 15;
+        price.Text = "Price";
+        price.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+        price.Click += label5_Click;
+        // 
+        // comboBoxVenue
+        // 
+        comboBoxVenue.FormattingEnabled = true;
+        comboBoxVenue.Location = new System.Drawing.Point(364, 622);
+        comboBoxVenue.Name = "comboBoxVenue";
+        comboBoxVenue.Size = new System.Drawing.Size(559, 38);
+        comboBoxVenue.TabIndex = 16;
+        // 
+        // label6
+        // 
+        label6.Location = new System.Drawing.Point(205, 625);
+        label6.Name = "label6";
+        label6.Size = new System.Drawing.Size(153, 35);
+        label6.TabIndex = 17;
+        label6.Text = "Venue";
+        label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+        // 
+        // comboBoxCategory
+        // 
+        comboBoxCategory.FormattingEnabled = true;
+        comboBoxCategory.Location = new System.Drawing.Point(364, 711);
+        comboBoxCategory.Name = "comboBoxCategory";
+        comboBoxCategory.Size = new System.Drawing.Size(268, 38);
+        comboBoxCategory.TabIndex = 18;
+        // 
+        // label7
+        // 
+        label7.Location = new System.Drawing.Point(205, 714);
+        label7.Name = "label7";
+        label7.Size = new System.Drawing.Size(153, 35);
+        label7.TabIndex = 19;
+        label7.Text = "Cetegory";
+        label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
         // 
         // AddEvents
         // 
         AutoScaleDimensions = new System.Drawing.SizeF(12F, 30F);
         AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        ClientSize = new System.Drawing.Size(1043, 741);
+        ClientSize = new System.Drawing.Size(1300, 1103);
+        Controls.Add(label7);
+        Controls.Add(comboBoxCategory);
+        Controls.Add(label6);
+        Controls.Add(comboBoxVenue);
+        Controls.Add(price);
+        Controls.Add(textBoxPrice);
+        Controls.Add(label1);
+        Controls.Add(textBoxTickets);
         Controls.Add(dateTimePicker2);
         Controls.Add(dateTimePicker1);
         Controls.Add(label4);
         Controls.Add(label3);
-        Controls.Add(textBox1);
+        Controls.Add(textBoxTitle);
         Controls.Add(label2);
-        Controls.Add(label1);
+        Controls.Add(labelOrganiser);
         Controls.Add(button2);
-        Controls.Add(button1);
+        Controls.Add(buttonBack);
         Text = "AddBooks";
         ResumeLayout(false);
         PerformLayout();
     }
+
+    private System.Windows.Forms.ComboBox comboBoxCategory;
+    private System.Windows.Forms.Label label7;
+
+    private System.Windows.Forms.Label label6;
+
+    private System.Windows.Forms.ComboBox comboBoxVenue;
+
+    private System.Windows.Forms.TextBox textBoxPrice;
+    private System.Windows.Forms.Label price;
+
+    private System.Windows.Forms.Label label1;
+
+    private System.Windows.Forms.TextBox textBoxTickets;
 
     private System.Windows.Forms.DateTimePicker dateTimePicker1;
     private System.Windows.Forms.DateTimePicker dateTimePicker2;
@@ -148,11 +246,11 @@ partial class AddEvents
     private System.Windows.Forms.Label label4;
 
     private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.TextBox textBox1;
+    private System.Windows.Forms.TextBox textBoxTitle;
 
-    private System.Windows.Forms.Button button1;
+    private System.Windows.Forms.Button buttonBack;
     private System.Windows.Forms.Button button2;
-    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label labelOrganiser;
 
     #endregion
 }

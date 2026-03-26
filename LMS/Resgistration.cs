@@ -16,7 +16,7 @@ public partial class Resgistration : Form
     }
     private bool EmailExists(string email)
     {
-        using (MySqlConnection connection = new MySqlConnection(DatabaseHelper.ConnectionString))
+        using (MySqlConnection connection = (GlobalManager.GetConnection()))
         {
             connection.Open();
             string query = "SELECT COUNT(*) FROM users WHERE email = @email";
@@ -37,6 +37,8 @@ public partial class Resgistration : Form
         string email = textBox2.Text.Trim();
         string password = textBox3.Text.Trim();
         string confirmPassword = textBox4.Text.Trim();
+        string role = comboBoxRole.SelectedItem?.ToString() ?? "Customer";
+
         
         
         if (name.Length == 0 || email.Length == 0 || password.Length == 0 || confirmPassword.Length == 0)
@@ -70,11 +72,11 @@ public partial class Resgistration : Form
         }
         try
         {
-            using (MySqlConnection connection = new MySqlConnection(DatabaseHelper.ConnectionString))
+            using (MySqlConnection connection = GlobalManager.GetConnection())
             {
                 connection.Open();
                 
-                string query = "INSERT INTO users (fullname, email, password) VALUES (@name, @email, @password)";
+                string query = "INSERT INTO users (fullname, email, password, role) VALUES (@name, @email, @password, @role)";
 
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
@@ -82,6 +84,7 @@ public partial class Resgistration : Form
                     command.Parameters.AddWithValue("@name", name);
                     command.Parameters.AddWithValue("@email", email);
                     command.Parameters.AddWithValue("@password", hashedPassword);
+                    command.Parameters.AddWithValue("@role", role);
                     
                     int result = command.ExecuteNonQuery();
 

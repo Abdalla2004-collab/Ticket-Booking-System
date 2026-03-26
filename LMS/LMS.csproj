@@ -12,7 +12,7 @@
       <Compile Update="Resgistration.cs">
         <SubType>Form</SubType>
       </Compile>
-      <Compile Update="Homepage.cs">
+      <Compile Update="OrganiserDashboard.cs">
         <SubType>Form</SubType>
       </Compile>
       <Compile Update="LoginForm.cs">
@@ -21,7 +21,16 @@
       <Compile Update="AddEvents.cs">
         <SubType>Form</SubType>
       </Compile>
-      <Compile Update="ViewEvents.cs">
+      <Compile Update="CustomerDashboard.cs">
+        <SubType>Form</SubType>
+      </Compile>
+      <Compile Update="AdminDashboard.cs">
+        <SubType>Form</SubType>
+      </Compile>
+      <Compile Update="ManageVenues.cs">
+        <SubType>Form</SubType>
+      </Compile>
+      <Compile Update="EditEvent.cs">
         <SubType>Form</SubType>
       </Compile>
     </ItemGroup>

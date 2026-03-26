@@ -42,11 +42,13 @@ partial class Resgistration
         textBox4 = new System.Windows.Forms.TextBox();
         button2 = new System.Windows.Forms.Button();
         label5 = new System.Windows.Forms.Label();
+        comboBoxRole = new System.Windows.Forms.ComboBox();
+        label6 = new System.Windows.Forms.Label();
         SuspendLayout();
         // 
         // button1
         // 
-        button1.Location = new System.Drawing.Point(425, 587);
+        button1.Location = new System.Drawing.Point(519, 612);
         button1.Name = "button1";
         button1.Size = new System.Drawing.Size(185, 55);
         button1.TabIndex = 0;
@@ -116,7 +118,7 @@ partial class Resgistration
         // 
         // button2
         // 
-        button2.Location = new System.Drawing.Point(425, 677);
+        button2.Location = new System.Drawing.Point(519, 718);
         button2.Name = "button2";
         button2.Size = new System.Drawing.Size(185, 55);
         button2.TabIndex = 9;
@@ -134,11 +136,31 @@ partial class Resgistration
         label5.Text = "Registration page";
         label5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         // 
+        // comboBoxRole
+        // 
+        comboBoxRole.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+        comboBoxRole.FormattingEnabled = true;
+        comboBoxRole.Items.AddRange(new object[] { "Organiser", "Customer" });
+        comboBoxRole.Location = new System.Drawing.Point(319, 534);
+        comboBoxRole.Name = "comboBoxRole";
+        comboBoxRole.Size = new System.Drawing.Size(291, 38);
+        comboBoxRole.TabIndex = 11;
+        // 
+        // label6
+        // 
+        label6.Location = new System.Drawing.Point(117, 537);
+        label6.Name = "label6";
+        label6.Size = new System.Drawing.Size(181, 35);
+        label6.TabIndex = 12;
+        label6.Text = "Role";
+        // 
         // Resgistration
         // 
         AutoScaleDimensions = new System.Drawing.SizeF(12F, 30F);
         AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         ClientSize = new System.Drawing.Size(1110, 832);
+        Controls.Add(label6);
+        Controls.Add(comboBoxRole);
         Controls.Add(label5);
         Controls.Add(button2);
         Controls.Add(textBox4);
@@ -155,6 +177,10 @@ partial class Resgistration
         ResumeLayout(false);
         PerformLayout();
     }
+
+    private System.Windows.Forms.Label label6;
+
+    private System.Windows.Forms.ComboBox comboBoxRole;
 
     private System.Windows.Forms.Button button2;
     private System.Windows.Forms.Label label5;

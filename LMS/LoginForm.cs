@@ -25,11 +25,11 @@ public partial class LoginForm : Form
 
         try
         {
-            using (MySqlConnection connection = new MySqlConnection(DatabaseHelper.ConnectionString))
+            using (MySqlConnection connection = GlobalManager.GetConnection())
             {
                 connection.Open();
 
-                string query = "SELECT fullname, password FROM users WHERE email = @email";
+                string query = "SELECT id, fullname, email, password, role FROM users WHERE email = @email";
 
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
@@ -41,17 +41,20 @@ public partial class LoginForm : Form
                         {
                             string storedPassword = reader["password"].ToString();
                             string fullname = reader["fullname"].ToString();
+                            string role = reader["role"].ToString();
+                            int id = Convert.ToInt32(reader["id"]);
                         
                             if (BCrypt.Net.BCrypt.Verify(password, storedPassword))
                             {
-                                Session.fullname = fullname;
-                                Session.email = email;
+                                var user = GlobalManager.CreateUser(id, fullname, email, role);
+                                GlobalManager.setCurrentUser(user);
                                 
                                 MessageBox.Show("Welcome, " + fullname + "!");
                                 this.Hide();
-                                Homepage homepage = new Homepage();
-                                homepage.Show();
-                                
+
+                                Form dashboard = GlobalManager.CurrentUser.getDashboard();
+                                dashboard.Show();   
+
                             }
                             else
                             {
