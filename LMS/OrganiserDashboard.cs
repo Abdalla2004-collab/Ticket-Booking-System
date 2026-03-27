@@ -56,14 +56,7 @@ public partial class OrganiserDashboard : Form
         this.Hide();
 
     }
-
-    private void buttonManageVenues_Click(object sender, EventArgs e)
-    {
-        var manageVenues = new ManageVenues();
-        manageVenues.Show();
-        this.Hide();
-
-    }
+    
 
     private void buttonEditEvent_Click(object sender, EventArgs e)
     {

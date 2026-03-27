@@ -37,7 +37,6 @@ partial class OrganiserDashboard
         Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
         Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
         Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-        buttonManageVenues = new System.Windows.Forms.Button();
         buttonEditEvent = new System.Windows.Forms.Button();
         dataGridViewEvents = new System.Windows.Forms.DataGridView();
         ((System.ComponentModel.ISupportInitialize)dataGridViewEvents).BeginInit();
@@ -55,7 +54,7 @@ partial class OrganiserDashboard
         // 
         // button2
         // 
-        button2.Location = new System.Drawing.Point(561, 776);
+        button2.Location = new System.Drawing.Point(561, 837);
         button2.Name = "button2";
         button2.Size = new System.Drawing.Size(229, 57);
         button2.TabIndex = 2;
@@ -97,19 +96,9 @@ partial class OrganiserDashboard
         Column3.ReadOnly = true;
         Column3.Width = 175;
         // 
-        // buttonManageVenues
-        // 
-        buttonManageVenues.Location = new System.Drawing.Point(561, 849);
-        buttonManageVenues.Name = "buttonManageVenues";
-        buttonManageVenues.Size = new System.Drawing.Size(229, 57);
-        buttonManageVenues.TabIndex = 5;
-        buttonManageVenues.Text = "Manage Venues";
-        buttonManageVenues.UseVisualStyleBackColor = true;
-        buttonManageVenues.Click += buttonManageVenues_Click;
-        // 
         // buttonEditEvent
         // 
-        buttonEditEvent.Location = new System.Drawing.Point(561, 700);
+        buttonEditEvent.Location = new System.Drawing.Point(561, 736);
         buttonEditEvent.Name = "buttonEditEvent";
         buttonEditEvent.Size = new System.Drawing.Size(229, 57);
         buttonEditEvent.TabIndex = 6;
@@ -137,7 +126,6 @@ partial class OrganiserDashboard
         ClientSize = new System.Drawing.Size(1304, 1009);
         Controls.Add(dataGridViewEvents);
         Controls.Add(buttonEditEvent);
-        Controls.Add(buttonManageVenues);
         Controls.Add(button3);
         Controls.Add(button2);
         Controls.Add(labelWelcome);
@@ -147,8 +135,6 @@ partial class OrganiserDashboard
     }
 
     private System.Windows.Forms.Button buttonEditEvent;
-
-    private System.Windows.Forms.Button buttonManageVenues;
 
     private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
     private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
