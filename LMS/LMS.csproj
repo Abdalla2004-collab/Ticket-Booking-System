@@ -27,9 +27,6 @@
       <Compile Update="AdminDashboard.cs">
         <SubType>Form</SubType>
       </Compile>
-      <Compile Update="ManageVenues.cs">
-        <SubType>Form</SubType>
-      </Compile>
       <Compile Update="EditEvent.cs">
         <SubType>Form</SubType>
       </Compile>

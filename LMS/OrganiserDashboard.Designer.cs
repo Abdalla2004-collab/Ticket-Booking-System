@@ -54,7 +54,7 @@ partial class OrganiserDashboard
         // 
         // button2
         // 
-        button2.Location = new System.Drawing.Point(561, 837);
+        button2.Location = new System.Drawing.Point(561, 729);
         button2.Name = "button2";
         button2.Size = new System.Drawing.Size(229, 57);
         button2.TabIndex = 2;
@@ -98,7 +98,7 @@ partial class OrganiserDashboard
         // 
         // buttonEditEvent
         // 
-        buttonEditEvent.Location = new System.Drawing.Point(561, 736);
+        buttonEditEvent.Location = new System.Drawing.Point(561, 823);
         buttonEditEvent.Name = "buttonEditEvent";
         buttonEditEvent.Size = new System.Drawing.Size(229, 57);
         buttonEditEvent.TabIndex = 6;

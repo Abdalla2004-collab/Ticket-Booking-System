@@ -19,7 +19,7 @@ public partial class OrganiserDashboard : Form
 
     private void loadMyevents()
     {
-        var organiser = (Organiser)GlobalManager.CurrentUser!;
+        var organiser = (Organiser)GlobalManager.CurrentUser;
         var events = organiser.getEvents();
 
         dataGridViewEvents.DataSource = events;

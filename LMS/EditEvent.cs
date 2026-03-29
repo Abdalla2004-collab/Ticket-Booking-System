@@ -116,17 +116,10 @@ public partial class EditEvent : Form
             connection.Open();
             string query = @"
                 UPDATE events 
-                SET title = @title, 
-                    category = @category, 
-                    totalTickets = @tickets,
-                    price = @price, 
-                    venueId = @venueId,
-                    eventDate = @date,
-                    eventTime = @time, 
-                    status = 'pending' 
-                WHERE eventId = @eventId
-                  AND organiserId = @organiserId
-            ";
+                SET title = @title, category = @category, totalTickets = @tickets,price = @price, 
+                    venueId = @venueId,eventDate = @date,eventTime = @time, status = 'Pending'
+                WHERE eventId = @eventId AND organiserId = @organiserId";
+            
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@eventId", _eventId);
