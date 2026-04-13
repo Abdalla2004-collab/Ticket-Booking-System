@@ -30,6 +30,12 @@
       <Compile Update="EditEvent.cs">
         <SubType>Form</SubType>
       </Compile>
+      <Compile Update="MyBookings.cs">
+        <SubType>Form</SubType>
+      </Compile>
+      <Compile Update="BookEvent.cs">
+        <SubType>Form</SubType>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
