@@ -23,18 +23,18 @@ public class Customer : User
             connection.Open();
 
             string query = @"SELECT e.eventId, e.title, e.category, e.eventDate, e.eventTime, e.price, e.status,
-                            v.name as VenueName,
+                            v.name as venueName,
                             e.totalTickets - COALESCE((SELECT SUM(b.quantity) FROM bookings b Where b.eventId = e.eventId
                             AND b.status = 'Confirmed'), 0) as availableTickets FROM events e
                             JOIN venues v on e.venueId = v.venueId 
                             WHERE e.status = 'Approved' AND e.eventDate>= CURRENT_DATE()
                             AND (@title = '' OR e.title LIKE @titleSearch)
-                            AND (@category = '' OR e.category LIKE @category)
+                            AND (@category = '' OR e.category = @category)
                             ORDER BY e.eventDate ASC";
 
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
-                command.Parameters.AddWithValue("@titleSearch", searchTitle);
+                command.Parameters.AddWithValue("@title", searchTitle);
                 command.Parameters.AddWithValue("@titleSearch", "%" + searchTitle + "%");
                 command.Parameters.AddWithValue("@category", filterCategory);
 
@@ -68,7 +68,7 @@ public class Customer : User
         {
             connection.Open();
 
-            string checkQuery = @"SELECT e.totalTickets - COALESCE((SELECT SUM (b.quantity) From bookings b
+            string checkQuery = @"SELECT e.totalTickets - COALESCE((SELECT SUM(b.quantity) From bookings b
                                   WHERE b.eventId = @eventId AND b.status = 'Confirmed'),0) AS availableTickets
                                   from events e where e.eventId = @eventId";
 
@@ -88,7 +88,7 @@ public class Customer : User
             
             decimal totalPrice = quantity * pricePerTicket;
 
-            string insertQuery = @"INSERT into bookings (INSERT INTO bookings (customerId, eventId, quantity, totalPrice)
+            string insertQuery = @"INSERT INTO bookings (customerId, eventId, quantity, totalPrice)
                                    VALUES (@customerId, @eventId, @quantity, @totalPrice)";
 
             using (MySqlCommand insertCmd = new MySqlCommand(insertQuery, connection))
@@ -99,7 +99,7 @@ public class Customer : User
                 insertCmd.Parameters.AddWithValue("@totalPrice", totalPrice);
                 
                 int rows = insertCmd.ExecuteNonQuery();
-                return rows < 0 ? (true, "Booking confirmed!") : (false, "Booking failed, please try again!!");
+                return rows > 0 ? (true, "Booking confirmed!") : (false, "Booking failed, please try again!!");
             }
         }
     }
@@ -112,7 +112,7 @@ public class Customer : User
         {  
             connection.Open();
 
-            string query = @"select b.bookingId, b.eventId, b.quantity, b.totalPrice, b.bookingDate, 
+            string query = @"select b.bookingId, b.eventId, b.quantity, b.totalPrice, b.bookingDate, b.status,
                                 e.title as eventTitle, e.eventDate, e.eventTime, v.name as venueName
                                 from bookings b
                                 JOIN events e on b.eventId = e.eventId
@@ -154,8 +154,8 @@ public class Customer : User
         {
             connection.Open();
 
-            string query = @"UPDATE bookings SET status = 'Canceled'
-                            WHERE bookingId = @bookingId AND customerId = id";
+            string query = @"UPDATE bookings SET status = 'Cancelled'
+                            WHERE bookingId = @bookingId AND customerId = @customerId";
 
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {

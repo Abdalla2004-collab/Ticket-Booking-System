@@ -6,9 +6,17 @@ public partial class CustomerDashboard : Form
     public CustomerDashboard()
     {
         InitializeComponent();
+        this.Load += CustomerDashboard_Load;
+        
     }
 
     private void CustomerDashboard_Load(object sender, EventArgs e)
+    {
+        label1.Text = "Welcome, " + GlobalManager.UserName;
+        loadCategories();
+        loadEvents();
+    }
+    private void loadCategories()
     {
         comboBox1.Items.Add("");
         comboBox1.Items.AddRange(new string[]
@@ -21,19 +29,28 @@ public partial class CustomerDashboard : Form
 
     private void loadEvents()
     {
-        string searchtTitle = textBox1.Text.Trim();
+        string searchTitle = textBox1.Text.Trim();
         string filterCategory = comboBox1.SelectedItem?.ToString() ?? "";
 
         var customer = (Customer)GlobalManager.CurrentUser;
-        var events = customer.getApprovedEvents(searchtTitle, filterCategory);
+        var events = customer.getApprovedEvents(searchTitle, filterCategory);
 
-        if (dataGridView1.Columns.Count == 0) return;
-        
-        dataGridView1.Columns["eventId"].Visible = false;
-        dataGridView1.Columns["venueId"].Visible = false;
-        dataGridView1.Columns["organiserId"].Visible = false;
-        dataGridView1.Columns["status"].Visible = false;
-        dataGridView1.Columns["totalTickets"].Visible = false;
+        dataGridView1.DataSource = events;
+
+        if (dataGridView1.Columns.Contains("eventId"))
+            dataGridView1.Columns["eventId"].Visible = false;
+
+        if (dataGridView1.Columns.Contains("venueId"))
+            dataGridView1.Columns["venueId"].Visible = false;
+
+        if (dataGridView1.Columns.Contains("organiserId"))
+            dataGridView1.Columns["organiserId"].Visible = false;
+
+        if (dataGridView1.Columns.Contains("status"))
+            dataGridView1.Columns["status"].Visible = false;
+
+        if (dataGridView1.Columns.Contains("totalTickets"))
+            dataGridView1.Columns["totalTickets"].Visible = false;
 
         dataGridView1.Columns["title"].HeaderText = "Event";
         dataGridView1.Columns["category"].HeaderText = "Category";
@@ -69,6 +86,7 @@ public partial class CustomerDashboard : Form
     private void button3_Click(object sender, EventArgs e)
     {
         var myBookings = new MyBookings();
+        myBookings.BookingsUpdated += () => loadEvents();
         myBookings.ShowDialog();
     }
 
@@ -96,7 +114,7 @@ public partial class CustomerDashboard : Form
         bookForm.ShowDialog();
         
         loadEvents();
-
+        bookForm.BookingCompleted += () => loadEvents();
 
     }
 }

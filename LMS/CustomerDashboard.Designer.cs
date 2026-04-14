@@ -118,10 +118,14 @@ partial class CustomerDashboard
         // 
         // dataGridView1
         // 
+        dataGridView1.AllowUserToAddRows = false;
+        dataGridView1.AllowUserToDeleteRows = false;
         dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
         dataGridView1.Location = new System.Drawing.Point(156, 212);
         dataGridView1.Name = "dataGridView1";
+        dataGridView1.ReadOnly = true;
         dataGridView1.RowHeadersWidth = 72;
+        dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
         dataGridView1.Size = new System.Drawing.Size(952, 374);
         dataGridView1.TabIndex = 8;
         dataGridView1.Text = "dataGridView1";
