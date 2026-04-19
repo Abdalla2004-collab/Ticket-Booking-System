@@ -1,4 +1,4 @@
-﻿using Org.BouncyCastle.Pqc.Crypto.Lms;
+using Org.BouncyCastle.Pqc.Crypto.Lms;
 
 namespace LMS;
 using LMS.Models;
@@ -10,6 +10,7 @@ public partial class MyBookings : Form
     public MyBookings()
     {
         InitializeComponent();
+        ThemeManager.ApplyTheme(this);
         this.Load += MyBookings_Load;
 
     }

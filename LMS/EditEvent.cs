@@ -1,4 +1,4 @@
-﻿namespace LMS;
+namespace LMS;
 using MySql.Data.MySqlClient;
 using LMS.Models;
 public partial class EditEvent : Form
@@ -7,6 +7,7 @@ public partial class EditEvent : Form
     public EditEvent(int eventId)
     {
         InitializeComponent();
+        ThemeManager.ApplyTheme(this);
         _eventId = eventId;
         this.Load += EditEvent_Load;
     }

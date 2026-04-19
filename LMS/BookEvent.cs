@@ -1,4 +1,4 @@
-﻿namespace LMS;
+namespace LMS;
 using LMS.Models;
 
 public partial class BookEvent : Form
@@ -9,6 +9,7 @@ public partial class BookEvent : Form
     public BookEvent(int eventId, string title, decimal price, int available)
     {
         InitializeComponent();
+        ThemeManager.ApplyTheme(this);
         
         _eventId = eventId;
         _pricePerTicket = price;

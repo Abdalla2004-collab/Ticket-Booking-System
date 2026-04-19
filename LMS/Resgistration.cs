@@ -1,4 +1,4 @@
-﻿
+
 using MySql.Data.MySqlClient;
 namespace LMS;
 using BCrypt.Net;
@@ -8,6 +8,7 @@ public partial class Resgistration : Form
     public Resgistration()
     {
         InitializeComponent();
+        ThemeManager.ApplyTheme(this);
     }
 
     private void Resgistration_Load(object sender, EventArgs e)

@@ -1,4 +1,4 @@
-﻿namespace LMS;
+namespace LMS;
 using LMS.Models;
 
 public partial class CustomerDashboard : Form
@@ -6,6 +6,7 @@ public partial class CustomerDashboard : Form
     public CustomerDashboard()
     {
         InitializeComponent();
+        ThemeManager.ApplyTheme(this);
         this.Load += CustomerDashboard_Load;
         
     }

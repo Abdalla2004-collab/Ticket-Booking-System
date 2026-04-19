@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using MySql.Data.MySqlClient;
 using BCrypt.Net;
 namespace LMS;
@@ -10,6 +10,7 @@ public partial class LoginForm : Form
     public LoginForm()
     {
         InitializeComponent();
+        ThemeManager.ApplyTheme(this);
     }
 
     private void button1_Click(object sender, EventArgs e)

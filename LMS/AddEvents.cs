@@ -1,4 +1,4 @@
-﻿using MySql.Data.MySqlClient;
+using MySql.Data.MySqlClient;
 using LMS.Models;
 
 namespace LMS;
@@ -8,6 +8,7 @@ public partial class AddEvents : Form
     public AddEvents()
     {
         InitializeComponent();
+        ThemeManager.ApplyTheme(this);
         this.Load += AddEvents_Load;
     }
 

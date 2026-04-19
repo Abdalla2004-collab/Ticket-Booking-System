@@ -1,4 +1,4 @@
-﻿using LMS.Models;
+using LMS.Models;
 namespace LMS;
 using MySql.Data.MySqlClient;
 
@@ -8,6 +8,7 @@ public partial class AdminDashboard : Form
     public AdminDashboard()
     {
         InitializeComponent();
+        ThemeManager.ApplyTheme(this);
         this.Load += AdminDashboard_Load;
     }
 

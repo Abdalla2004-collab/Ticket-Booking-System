@@ -1,4 +1,4 @@
-﻿using LMS.Models;
+using LMS.Models;
 
 namespace LMS;
 
@@ -7,6 +7,7 @@ public partial class OrganiserDashboard : Form
     public OrganiserDashboard()
     {
         InitializeComponent();
+        ThemeManager.ApplyTheme(this);
         this.Load += OrganiserDashboard_Load;
     }
 
