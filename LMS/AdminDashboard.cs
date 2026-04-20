@@ -128,7 +128,6 @@ public partial class AdminDashboard : Form
         }
     }
 
-    //reject event — sends notification to organiser
     private void button7_Click(object sender, EventArgs e)
     {
         if (dataGridView1.SelectedCells.Count == 0)
@@ -143,12 +142,10 @@ public partial class AdminDashboard : Form
         
         admin.updateEventStatus(eventId, "Rejected");
         
-        // Notify the organiser
         GlobalManager.sendNotification(organiserId, $"Your event '{title}' has been rejected.");
         
         getEvents();
     }
-    //delete user
     private void button4_Click(object sender, EventArgs e)
     {
         if (dataGridView2.SelectedCells.Count == 0)
@@ -164,7 +161,6 @@ public partial class AdminDashboard : Form
 
     }
     
-    //approve event — sends notification to organiser
     private void button6_Click(object sender, EventArgs e)
     {
         if (dataGridView1.SelectedCells.Count == 0)
@@ -179,13 +175,10 @@ public partial class AdminDashboard : Form
         
         admin.updateEventStatus(eventId, "Approved");
         
-        // Notify the organiser
         GlobalManager.sendNotification(organiserId, $"Your event '{title}' has been approved!");
         
         getEvents();
     }
-    
-    // ── Discount Codes Tab ───────────────────────────────────────────────
     
     private void loadDiscounts()
     {

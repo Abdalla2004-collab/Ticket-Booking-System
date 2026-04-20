@@ -63,12 +63,9 @@ public partial class CustomerDashboard : Form
         dataGridView1.Columns["availableTickets"].HeaderText = "Tickets Left";
     }
     
-    // ── Notifications ────────────────────────────────────────────────────
-    
     private void loadNotifications()
     {
-        var customer = (Customer)GlobalManager.CurrentUser;
-        var notifications = customer.getUnreadNotifications();
+        var notifications = GlobalManager.getUnreadNotifications();
 
         if (notifications.Count > 0)
         {
@@ -114,10 +111,10 @@ public partial class CustomerDashboard : Form
     {
         var myBookings = new MyBookings();
         myBookings.BookingsUpdated += () => loadEvents();
+        myBookings.BookingsUpdated += () => loadNotifications();
         myBookings.ShowDialog();
     }
 
-    //booking events
     private void button2_Click(object sender, EventArgs e)
     {
         if (dataGridView1.SelectedRows.Count == 0)
@@ -141,8 +138,7 @@ public partial class CustomerDashboard : Form
         bookForm.ShowDialog();
         
         loadEvents();
-        bookForm.BookingCompleted += () => loadEvents();
-
+        loadNotifications();
     }
 
     private void button4_Click_1(object sender, EventArgs e)

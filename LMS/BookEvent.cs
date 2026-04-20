@@ -7,7 +7,6 @@ public partial class BookEvent : Form
     private readonly string _eventTitle;
     private readonly decimal _pricePerTicket;
     private int _discountPercentage = 0;
-    public event Action? BookingCompleted;
     public BookEvent(int eventId, string title, decimal price, int available)
     {
         InitializeComponent();
@@ -87,7 +86,6 @@ public partial class BookEvent : Form
         }
     }
 
-    //book an event
     private void button1_Click(object sender, EventArgs e)
     {
         int quantity = (int)numericUpDown1.Value;
@@ -99,11 +97,9 @@ public partial class BookEvent : Form
 
         if (result.success)
         {
-            // Send notification to customer
             GlobalManager.sendNotification(GlobalManager.UserId, 
                 $"Booking confirmed for '{_eventTitle}'.");
-            
-            BookingCompleted?.Invoke();
+            customer.useDiscount(textBoxDiscountCode.Text.Trim());
             this.Close();
         }
     }

@@ -46,7 +46,6 @@ public partial class MyBookings : Form
         this.Close();
     }
 
-    //Cancel bookings
     private void button2_Click(object sender, EventArgs e)
     {
         if (dataGridView1.SelectedRows.Count == 0)
@@ -83,7 +82,6 @@ public partial class MyBookings : Form
         {
             string eventTitle = dataGridView1.SelectedRows[0].Cells["eventTitle"].Value.ToString();
             
-            // Send notification
             GlobalManager.sendNotification(GlobalManager.UserId, 
                 $"Your booking for '{eventTitle}' has been cancelled.");
             

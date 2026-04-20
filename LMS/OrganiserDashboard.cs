@@ -40,13 +40,10 @@ public partial class OrganiserDashboard : Form
         dataGridViewEvents.Columns["venueName"].HeaderText = "Venue";
 
     }
-
-    // ── Notifications ────────────────────────────────────────────────────
     
     private void loadNotifications()
     {
-        var organiser = (Organiser)GlobalManager.CurrentUser;
-        var notifications = organiser.getUnreadNotifications();
+        var notifications = GlobalManager.getUnreadNotifications();
 
         if (notifications.Count > 0)
         {

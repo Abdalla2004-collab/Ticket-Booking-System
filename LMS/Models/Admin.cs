@@ -148,9 +148,9 @@ public class Admin : User
     public (bool success, string message) createDiscount(string code, int percentage)
     {
     
-        if (string.IsNullOrWhiteSpace(code) || !System.Text.RegularExpressions.Regex.IsMatch(code, @"^[a-zA-Z0-9]+$"))
+        if (string.IsNullOrWhiteSpace(code))
         {
-            return (false, "Discount code must contain letters and numbers only.");
+            return (false, "Discount code can not be empty.");
         }
 
         if (percentage < 1 || percentage > 100)

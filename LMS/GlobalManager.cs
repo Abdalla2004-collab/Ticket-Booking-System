@@ -58,6 +58,38 @@ public static class GlobalManager
         return user;
     }
     
+    public static List<Notification> getUnreadNotifications()
+    {
+        var notifications = new List<Notification>();
+        using (MySqlConnection connection = GlobalManager.GetConnection())
+        {
+            connection.Open();
+            string query = @"SELECT notificationId, userId, message, isRead, createdAt
+                             FROM notifications WHERE userId = @userId AND isRead = 0
+                             ORDER BY createdAt DESC";
+
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@userId", CurrentUser.id);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        notifications.Add(new Notification
+                        {
+                            notificationId = Convert.ToInt32(reader["notificationId"]),
+                            userId         = Convert.ToInt32(reader["userId"]),
+                            message        = reader["message"].ToString(),
+                            isRead         = Convert.ToBoolean(reader["isRead"]),
+                            createdAt      = Convert.ToDateTime(reader["createdAt"])
+                        });
+                    }
+                }
+            }
+        }
+        return notifications;
+    }
+    
     public static void sendNotification(int userId, string message)
     {
         try
@@ -80,4 +112,5 @@ public static class GlobalManager
             System.Diagnostics.Debug.WriteLine($"Failed to send notification: {ex.Message}");
         }
     }
+    
 }
