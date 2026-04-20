@@ -122,7 +122,7 @@ partial class Resgistration
         button2.Name = "button2";
         button2.Size = new System.Drawing.Size(185, 55);
         button2.TabIndex = 9;
-        button2.Text = "Back to login";
+        button2.Text = "Go back";
         button2.UseVisualStyleBackColor = true;
         button2.Click += button2_Click;
         // 

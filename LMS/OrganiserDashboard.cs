@@ -16,6 +16,7 @@ public partial class OrganiserDashboard : Form
         if (DesignMode) return;
         labelWelcome.Text = "Welcome, " + GlobalManager.UserName;
         loadMyevents();
+        loadNotifications();
     }
 
     private void loadMyevents()
@@ -38,6 +39,33 @@ public partial class OrganiserDashboard : Form
         dataGridViewEvents.Columns["status"].HeaderText = "Status";
         dataGridViewEvents.Columns["venueName"].HeaderText = "Venue";
 
+    }
+
+    // ── Notifications ────────────────────────────────────────────────────
+    
+    private void loadNotifications()
+    {
+        var organiser = (Organiser)GlobalManager.CurrentUser;
+        var notifications = organiser.getUnreadNotifications();
+
+        if (notifications.Count > 0)
+        {
+            string combined = string.Join("\n", 
+                notifications.ConvertAll(n => $"• {n.message}"));
+            labelNotificationText.Text = combined;
+            panelNotifications.Visible = true;
+        }
+        else
+        {
+            panelNotifications.Visible = false;
+        }
+    }
+
+    private void buttonDismissNotifications_Click(object sender, EventArgs e)
+    {
+        var organiser = (Organiser)GlobalManager.CurrentUser;
+        organiser.markNotificationsRead();
+        panelNotifications.Visible = false;
     }
 
     private void button3_Click(object sender, EventArgs e)

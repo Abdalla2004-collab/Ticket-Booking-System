@@ -1,4 +1,4 @@
-﻿namespace LMS.Models;
+namespace LMS.Models;
 using MySql.Data.MySqlClient;
 
 public class Customer : User
@@ -62,7 +62,7 @@ public class Customer : User
         }
     }
     
-    public (bool success, string message) bookEvent(int eventId, int quantity, decimal pricePerTicket)
+    public (bool success, string message) bookEvent(int eventId, int quantity, decimal pricePerTicket, int discountPercentage = 0)
     {
         using (MySqlConnection connection = GlobalManager.GetConnection())
         {
@@ -86,7 +86,8 @@ public class Customer : User
                 return (false, $"Only {available} tickets are available for this event.");
             }
             
-            decimal totalPrice = quantity * pricePerTicket;
+            decimal subtotal = quantity * pricePerTicket;
+            decimal totalPrice = subtotal * (1 - discountPercentage / 100m);
 
             string insertQuery = @"INSERT INTO bookings (customerId, eventId, quantity, totalPrice)
                                    VALUES (@customerId, @eventId, @quantity, @totalPrice)";
@@ -164,6 +165,74 @@ public class Customer : User
                 
                 int rows = command.ExecuteNonQuery();
                 return rows > 0;
+            }
+        }
+    }
+        
+    public (bool valid, int percentage) validateDiscount(string code)
+    {
+        using (MySqlConnection connection = GlobalManager.GetConnection())
+        {
+            connection.Open();
+            string query = @"SELECT percentage FROM discounts WHERE code = @code AND isActive = 1";
+
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@code", code.ToUpper());
+                var result = command.ExecuteScalar();
+                
+                if (result != null)
+                {
+                    return (true, Convert.ToInt32(result));
+                }
+                return (false, 0);
+            }
+        }
+    }
+    
+    public List<Notification> getUnreadNotifications()
+    {
+        var notifications = new List<Notification>();
+        using (MySqlConnection connection = GlobalManager.GetConnection())
+        {
+            connection.Open();
+            string query = @"SELECT notificationId, userId, message, isRead, createdAt
+                             FROM notifications WHERE userId = @userId AND isRead = 0
+                             ORDER BY createdAt DESC";
+
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@userId", id);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        notifications.Add(new Notification
+                        {
+                            notificationId = Convert.ToInt32(reader["notificationId"]),
+                            userId         = Convert.ToInt32(reader["userId"]),
+                            message        = reader["message"].ToString(),
+                            isRead         = Convert.ToBoolean(reader["isRead"]),
+                            createdAt      = Convert.ToDateTime(reader["createdAt"])
+                        });
+                    }
+                }
+            }
+        }
+        return notifications;
+    }
+
+    public void markNotificationsRead()
+    {
+        using (MySqlConnection connection = GlobalManager.GetConnection())
+        {
+            connection.Open();
+            string query = @"UPDATE notifications SET isRead = 1 WHERE userId = @userId AND isRead = 0";
+
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@userId", id);
+                command.ExecuteNonQuery();
             }
         }
     }

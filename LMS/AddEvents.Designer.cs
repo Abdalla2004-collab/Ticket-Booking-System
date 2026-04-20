@@ -56,7 +56,7 @@ partial class AddEvents
         buttonBack.Name = "buttonBack";
         buttonBack.Size = new System.Drawing.Size(209, 56);
         buttonBack.TabIndex = 0;
-        buttonBack.Text = "Back to homepage";
+        buttonBack.Text = "Close";
         buttonBack.UseVisualStyleBackColor = true;
         buttonBack.Click += buttonBack_Click_1;
         // 

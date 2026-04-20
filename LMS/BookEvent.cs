@@ -4,7 +4,9 @@ using LMS.Models;
 public partial class BookEvent : Form
 {
     private readonly int _eventId;
+    private readonly string _eventTitle;
     private readonly decimal _pricePerTicket;
+    private int _discountPercentage = 0;
     public event Action? BookingCompleted;
     public BookEvent(int eventId, string title, decimal price, int available)
     {
@@ -12,6 +14,7 @@ public partial class BookEvent : Form
         ThemeManager.ApplyTheme(this);
         
         _eventId = eventId;
+        _eventTitle = title;
         _pricePerTicket = price;
         
         label1.Text = title;
@@ -30,12 +33,58 @@ public partial class BookEvent : Form
     private void updateTotal()
     {
         int qty = (int)numericUpDown1.Value;
-        decimal total = qty * _pricePerTicket;
-        label4.Text = $"Total: £{total:F2}";
+        decimal subtotal = qty * _pricePerTicket;
+        decimal discount = subtotal * (_discountPercentage / 100m);
+        decimal total = subtotal - discount;
+        
+        if (_discountPercentage > 0)
+        {
+            labelSubtotal.Text = $"Subtotal: £{subtotal:F2}";
+            labelDiscountAmount.Text = $"Discount (-{_discountPercentage}%): -£{discount:F2}";
+            label4.Text = $"Total: £{total:F2}";
+        }
+        else
+        {
+            labelSubtotal.Text = "";
+            labelDiscountAmount.Text = "";
+            label4.Text = $"Total: £{total:F2}";
+        }
     }
     private void numericUpDown1_ValueChanged(object sender, EventArgs e)
     {
         updateTotal();
+    }
+    
+    private void buttonApplyDiscount_Click(object sender, EventArgs e)
+    {
+        string code = textBoxDiscountCode.Text.Trim();
+        
+        if (string.IsNullOrWhiteSpace(code))
+        {
+            labelDiscountStatus.ForeColor = System.Drawing.Color.Red;
+            labelDiscountStatus.Text = "Please enter a discount code.";
+            return;
+        }
+
+        var customer = (Customer)GlobalManager.CurrentUser;
+        var result = customer.validateDiscount(code);
+
+        if (result.valid)
+        {
+            _discountPercentage = result.percentage;
+            labelDiscountStatus.ForeColor = System.Drawing.Color.Green;
+            labelDiscountStatus.Text = $"{result.percentage}% discount applied!";
+            textBoxDiscountCode.Enabled = false;
+            buttonApplyDiscount.Enabled = false;
+            updateTotal();
+        }
+        else
+        {
+            _discountPercentage = 0;
+            labelDiscountStatus.ForeColor = System.Drawing.Color.Red;
+            labelDiscountStatus.Text = "Invalid or expired discount code.";
+            updateTotal();
+        }
     }
 
     //book an event
@@ -44,12 +93,16 @@ public partial class BookEvent : Form
         int quantity = (int)numericUpDown1.Value;
 
         var customer = (Customer)GlobalManager.CurrentUser;
-        var result = customer.bookEvent(_eventId, quantity, _pricePerTicket);
+        var result = customer.bookEvent(_eventId, quantity, _pricePerTicket, _discountPercentage);
 
         MessageBox.Show(result.message);
 
         if (result.success)
         {
+            // Send notification to customer
+            GlobalManager.sendNotification(GlobalManager.UserId, 
+                $"Booking confirmed for '{_eventTitle}'.");
+            
             BookingCompleted?.Invoke();
             this.Close();
         }

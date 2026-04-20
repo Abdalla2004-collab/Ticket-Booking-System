@@ -81,6 +81,12 @@ public partial class MyBookings : Form
 
         if (result)
         {
+            string eventTitle = dataGridView1.SelectedRows[0].Cells["eventTitle"].Value.ToString();
+            
+            // Send notification
+            GlobalManager.sendNotification(GlobalManager.UserId, 
+                $"Your booking for '{eventTitle}' has been cancelled.");
+            
             MessageBox.Show("Booking cancelled.");
             loadBookings();
             BookingsUpdated?.Invoke();

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace LMS;
 
@@ -53,6 +53,14 @@ partial class AdminDashboard
         button5 = new System.Windows.Forms.Button();
         tabPage4 = new System.Windows.Forms.TabPage();
         dataGridView3 = new System.Windows.Forms.DataGridView();
+        labelDiscountTitle = new System.Windows.Forms.Label();
+        labelDiscountCode = new System.Windows.Forms.Label();
+        textBoxDiscountCode = new System.Windows.Forms.TextBox();
+        labelPercentage = new System.Windows.Forms.Label();
+        numericPercentage = new System.Windows.Forms.NumericUpDown();
+        buttonCreateDiscount = new System.Windows.Forms.Button();
+        buttonToggleDiscount = new System.Windows.Forms.Button();
+        button8 = new System.Windows.Forms.Button();
         TabControl1.SuspendLayout();
         tabPage1.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
@@ -61,6 +69,7 @@ partial class AdminDashboard
         tabPage3.SuspendLayout();
         tabPage4.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)numericPercentage).BeginInit();
         SuspendLayout();
         // 
         // button2
@@ -274,30 +283,112 @@ partial class AdminDashboard
         button5.UseVisualStyleBackColor = true;
         button5.Click += button5_Click;
         // 
-        // tabPage4
+        // tabPage4 — Discount Codes
         // 
+        tabPage4.Controls.Add(labelDiscountTitle);
         tabPage4.Controls.Add(dataGridView3);
+        tabPage4.Controls.Add(labelDiscountCode);
+        tabPage4.Controls.Add(textBoxDiscountCode);
+        tabPage4.Controls.Add(labelPercentage);
+        tabPage4.Controls.Add(numericPercentage);
+        tabPage4.Controls.Add(buttonCreateDiscount);
+        tabPage4.Controls.Add(buttonToggleDiscount);
+        tabPage4.Controls.Add(button8);
         tabPage4.Location = new System.Drawing.Point(4, 39);
         tabPage4.Name = "tabPage4";
         tabPage4.Padding = new System.Windows.Forms.Padding(3);
         tabPage4.Size = new System.Drawing.Size(902, 627);
         tabPage4.TabIndex = 3;
-        tabPage4.Text = "tabPage4";
+        tabPage4.Text = "Discount Codes";
         tabPage4.UseVisualStyleBackColor = true;
+        // 
+        // labelDiscountTitle
+        // 
+        labelDiscountTitle.Font = new System.Drawing.Font("Segoe UI", 14.142858F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)0));
+        labelDiscountTitle.Location = new System.Drawing.Point(320, 15);
+        labelDiscountTitle.Name = "labelDiscountTitle";
+        labelDiscountTitle.Size = new System.Drawing.Size(300, 40);
+        labelDiscountTitle.TabIndex = 10;
+        labelDiscountTitle.Text = "Discount Codes";
+        labelDiscountTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         // 
         // dataGridView3
         // 
         dataGridView3.AllowUserToAddRows = false;
         dataGridView3.AllowUserToDeleteRows = false;
         dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-        dataGridView3.Location = new System.Drawing.Point(116, 6);
+        dataGridView3.Location = new System.Drawing.Point(54, 70);
         dataGridView3.MultiSelect = false;
         dataGridView3.Name = "dataGridView3";
         dataGridView3.ReadOnly = true;
         dataGridView3.RowHeadersWidth = 72;
         dataGridView3.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-        dataGridView3.Size = new System.Drawing.Size(727, 435);
+        dataGridView3.Size = new System.Drawing.Size(800, 300);
         dataGridView3.TabIndex = 0;
+        // 
+        // labelDiscountCode
+        // 
+        labelDiscountCode.Location = new System.Drawing.Point(100, 400);
+        labelDiscountCode.Name = "labelDiscountCode";
+        labelDiscountCode.Size = new System.Drawing.Size(130, 36);
+        labelDiscountCode.TabIndex = 1;
+        labelDiscountCode.Text = "Code:";
+        // 
+        // textBoxDiscountCode
+        // 
+        textBoxDiscountCode.Location = new System.Drawing.Point(240, 397);
+        textBoxDiscountCode.Name = "textBoxDiscountCode";
+        textBoxDiscountCode.PlaceholderText = "e.g. SAVE20";
+        textBoxDiscountCode.Size = new System.Drawing.Size(200, 35);
+        textBoxDiscountCode.TabIndex = 2;
+        // 
+        // labelPercentage
+        // 
+        labelPercentage.Location = new System.Drawing.Point(470, 400);
+        labelPercentage.Name = "labelPercentage";
+        labelPercentage.Size = new System.Drawing.Size(130, 36);
+        labelPercentage.TabIndex = 3;
+        labelPercentage.Text = "Percentage:";
+        // 
+        // numericPercentage
+        // 
+        numericPercentage.Location = new System.Drawing.Point(610, 397);
+        numericPercentage.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+        numericPercentage.Maximum = new decimal(new int[] { 100, 0, 0, 0 });
+        numericPercentage.Name = "numericPercentage";
+        numericPercentage.Size = new System.Drawing.Size(80, 35);
+        numericPercentage.TabIndex = 4;
+        numericPercentage.Value = new decimal(new int[] { 10, 0, 0, 0 });
+        // 
+        // buttonCreateDiscount
+        // 
+        buttonCreateDiscount.Location = new System.Drawing.Point(300, 470);
+        buttonCreateDiscount.Name = "buttonCreateDiscount";
+        buttonCreateDiscount.Size = new System.Drawing.Size(160, 41);
+        buttonCreateDiscount.TabIndex = 5;
+        buttonCreateDiscount.Text = "Create Code";
+        buttonCreateDiscount.UseVisualStyleBackColor = true;
+        buttonCreateDiscount.Click += buttonCreateDiscount_Click;
+        // 
+        // buttonToggleDiscount
+        // 
+        buttonToggleDiscount.Location = new System.Drawing.Point(500, 470);
+        buttonToggleDiscount.Name = "buttonToggleDiscount";
+        buttonToggleDiscount.Size = new System.Drawing.Size(200, 41);
+        buttonToggleDiscount.TabIndex = 6;
+        buttonToggleDiscount.Text = "Toggle Active";
+        buttonToggleDiscount.UseVisualStyleBackColor = true;
+        buttonToggleDiscount.Click += buttonToggleDiscount_Click;
+        // 
+        // button8 — Logout on Discounts tab
+        // 
+        button8.Location = new System.Drawing.Point(400, 547);
+        button8.Name = "button8";
+        button8.Size = new System.Drawing.Size(136, 41);
+        button8.TabIndex = 7;
+        button8.Text = "Log out";
+        button8.UseVisualStyleBackColor = true;
+        button8.Click += button8_Click;
         // 
         // AdminDashboard
         // 
@@ -314,7 +405,9 @@ partial class AdminDashboard
         tabPage3.ResumeLayout(false);
         tabPage3.PerformLayout();
         tabPage4.ResumeLayout(false);
+        tabPage4.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)dataGridView3).EndInit();
+        ((System.ComponentModel.ISupportInitialize)numericPercentage).EndInit();
         ResumeLayout(false);
     }
 
@@ -352,4 +445,13 @@ partial class AdminDashboard
     private DataGridView dataGridView2;
     private TabPage tabPage4;
     private DataGridView dataGridView3;
+    
+    private System.Windows.Forms.Label labelDiscountTitle;
+    private System.Windows.Forms.Label labelDiscountCode;
+    private System.Windows.Forms.TextBox textBoxDiscountCode;
+    private System.Windows.Forms.Label labelPercentage;
+    private System.Windows.Forms.NumericUpDown numericPercentage;
+    private System.Windows.Forms.Button buttonCreateDiscount;
+    private System.Windows.Forms.Button buttonToggleDiscount;
+    private System.Windows.Forms.Button button8;
 }

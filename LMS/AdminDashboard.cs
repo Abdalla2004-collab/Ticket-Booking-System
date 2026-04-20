@@ -10,12 +10,14 @@ public partial class AdminDashboard : Form
         InitializeComponent();
         ThemeManager.ApplyTheme(this);
         this.Load += AdminDashboard_Load;
+        
     }
 
     public void AdminDashboard_Load(object sender, EventArgs e)
     {
         getEvents();
         loadAllUsers();
+        loadDiscounts();
     }
 
     public void loadAllUsers()
@@ -126,7 +128,7 @@ public partial class AdminDashboard : Form
         }
     }
 
-    //reject event
+    //reject event — sends notification to organiser
     private void button7_Click(object sender, EventArgs e)
     {
         if (dataGridView1.SelectedCells.Count == 0)
@@ -136,8 +138,14 @@ public partial class AdminDashboard : Form
         }
         var admin = (Admin)GlobalManager.CurrentUser;
         int eventId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["eventId"].Value);
+        int organiserId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["organiserId"].Value);
+        string title = dataGridView1.SelectedRows[0].Cells["title"].Value.ToString();
         
         admin.updateEventStatus(eventId, "Rejected");
+        
+        // Notify the organiser
+        GlobalManager.sendNotification(organiserId, $"Your event '{title}' has been rejected.");
+        
         getEvents();
     }
     //delete user
@@ -156,7 +164,7 @@ public partial class AdminDashboard : Form
 
     }
     
-    //approve event
+    //approve event — sends notification to organiser
     private void button6_Click(object sender, EventArgs e)
     {
         if (dataGridView1.SelectedCells.Count == 0)
@@ -166,8 +174,71 @@ public partial class AdminDashboard : Form
         }
         var admin = (Admin)GlobalManager.CurrentUser;
         int eventId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["eventId"].Value);
+        int organiserId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["organiserId"].Value);
+        string title = dataGridView1.SelectedRows[0].Cells["title"].Value.ToString();
         
         admin.updateEventStatus(eventId, "Approved");
+        
+        // Notify the organiser
+        GlobalManager.sendNotification(organiserId, $"Your event '{title}' has been approved!");
+        
         getEvents();
+    }
+    
+    // ── Discount Codes Tab ───────────────────────────────────────────────
+    
+    private void loadDiscounts()
+    {
+        var admin = (Admin)GlobalManager.CurrentUser;
+        var discounts = admin.getDiscounts();
+        
+        dataGridView3.DataSource = discounts;
+        
+        dataGridView3.Columns["discountId"].Visible = false;
+        dataGridView3.Columns["code"].HeaderText = "Code";
+        dataGridView3.Columns["percentage"].HeaderText = "Discount %";
+        dataGridView3.Columns["isActive"].HeaderText = "Active";
+        dataGridView3.Columns["createdAt"].HeaderText = "Created";
+    }
+
+    private void buttonCreateDiscount_Click(object sender, EventArgs e)
+    {
+        string code = textBoxDiscountCode.Text.Trim();
+        int percentage = (int)numericPercentage.Value;
+
+        var admin = (Admin)GlobalManager.CurrentUser;
+        var result = admin.createDiscount(code, percentage);
+
+        MessageBox.Show(result.message);
+
+        if (result.success)
+        {
+            textBoxDiscountCode.Text = "";
+            numericPercentage.Value = 10;
+            loadDiscounts();
+        }
+    }
+
+    private void buttonToggleDiscount_Click(object sender, EventArgs e)
+    {
+        if (dataGridView3.SelectedRows.Count == 0)
+        {
+            MessageBox.Show("Please select a discount code first.");
+            return;
+        }
+
+        int discountId = Convert.ToInt32(dataGridView3.SelectedRows[0].Cells["discountId"].Value);
+        
+        var admin = (Admin)GlobalManager.CurrentUser;
+        admin.toggleDiscount(discountId);
+        loadDiscounts();
+    }
+    
+    private void button8_Click(object sender, EventArgs e)
+    {
+        GlobalManager.clearCurrentUser();
+        LoginForm loginForm = new LoginForm();
+        loginForm.Show();
+        this.Hide();
     }
 }

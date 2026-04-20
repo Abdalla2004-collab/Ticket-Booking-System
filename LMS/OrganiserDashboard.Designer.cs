@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace LMS;
 
@@ -39,8 +39,45 @@ partial class OrganiserDashboard
         Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
         buttonEditEvent = new System.Windows.Forms.Button();
         dataGridViewEvents = new System.Windows.Forms.DataGridView();
+        panelNotifications = new System.Windows.Forms.Panel();
+        labelNotificationText = new System.Windows.Forms.Label();
+        buttonDismissNotifications = new System.Windows.Forms.Button();
         ((System.ComponentModel.ISupportInitialize)dataGridViewEvents).BeginInit();
+        panelNotifications.SuspendLayout();
         SuspendLayout();
+        // 
+        // panelNotifications
+        // 
+        panelNotifications.BackColor = System.Drawing.Color.FromArgb(230, 243, 255);
+        panelNotifications.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+        panelNotifications.Controls.Add(labelNotificationText);
+        panelNotifications.Controls.Add(buttonDismissNotifications);
+        panelNotifications.Location = new System.Drawing.Point(84, 10);
+        panelNotifications.Name = "panelNotifications";
+        panelNotifications.Padding = new System.Windows.Forms.Padding(10);
+        panelNotifications.Size = new System.Drawing.Size(1159, 120);
+        panelNotifications.TabIndex = 20;
+        panelNotifications.Visible = false;
+        // 
+        // labelNotificationText
+        // 
+        labelNotificationText.AutoSize = false;
+        labelNotificationText.Location = new System.Drawing.Point(10, 10);
+        labelNotificationText.Name = "labelNotificationText";
+        labelNotificationText.Size = new System.Drawing.Size(980, 90);
+        labelNotificationText.TabIndex = 0;
+        labelNotificationText.Text = "";
+        labelNotificationText.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular);
+        // 
+        // buttonDismissNotifications
+        // 
+        buttonDismissNotifications.Location = new System.Drawing.Point(1020, 40);
+        buttonDismissNotifications.Name = "buttonDismissNotifications";
+        buttonDismissNotifications.Size = new System.Drawing.Size(100, 40);
+        buttonDismissNotifications.TabIndex = 1;
+        buttonDismissNotifications.Text = "Dismiss";
+        buttonDismissNotifications.UseVisualStyleBackColor = true;
+        buttonDismissNotifications.Click += buttonDismissNotifications_Click;
         // 
         // labelWelcome
         // 
@@ -124,6 +161,7 @@ partial class OrganiserDashboard
         AutoScaleDimensions = new System.Drawing.SizeF(12F, 30F);
         AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         ClientSize = new System.Drawing.Size(1304, 1009);
+        Controls.Add(panelNotifications);
         Controls.Add(dataGridViewEvents);
         Controls.Add(buttonEditEvent);
         Controls.Add(button3);
@@ -131,6 +169,7 @@ partial class OrganiserDashboard
         Controls.Add(labelWelcome);
         Text = "OrganiserDashboard";
         ((System.ComponentModel.ISupportInitialize)dataGridViewEvents).EndInit();
+        panelNotifications.ResumeLayout(false);
         ResumeLayout(false);
     }
 
@@ -146,6 +185,10 @@ partial class OrganiserDashboard
     private System.Windows.Forms.Button button3;
 
     private System.Windows.Forms.Label labelWelcome;
+    
+    private System.Windows.Forms.Panel panelNotifications;
+    private System.Windows.Forms.Label labelNotificationText;
+    private System.Windows.Forms.Button buttonDismissNotifications;
 
     #endregion
 }

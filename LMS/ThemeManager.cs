@@ -65,17 +65,24 @@ namespace LMS
             else if (control is DataGridView dgv)
             {
                 dgv.BackgroundColor = WhiteColor;
-                dgv.BorderStyle = BorderStyle.None;
+                dgv.BorderStyle = BorderStyle.FixedSingle;
                 dgv.ColumnHeadersDefaultCellStyle.BackColor = PrimaryBlue;
                 dgv.ColumnHeadersDefaultCellStyle.ForeColor = WhiteColor;
                 dgv.ColumnHeadersDefaultCellStyle.Font = BoldFont;
-                dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+                dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
                 dgv.RowHeadersVisible = false;
                 dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(153, 204, 255);
                 dgv.DefaultCellStyle.SelectionForeColor = TextBlack;
                 dgv.EnableHeadersVisualStyles = false;
                 dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 245);
                 dgv.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                
+                dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+                dgv.GridColor = Color.LightGray;
+
+                dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dgv.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+                dgv.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
             }
 
             foreach (Control child in control.Controls)

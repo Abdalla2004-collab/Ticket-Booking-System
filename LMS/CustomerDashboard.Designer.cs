@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace LMS;
 
@@ -40,8 +40,45 @@ partial class CustomerDashboard
         button3 = new System.Windows.Forms.Button();
         button4 = new System.Windows.Forms.Button();
         dataGridView1 = new System.Windows.Forms.DataGridView();
+        panelNotifications = new System.Windows.Forms.Panel();
+        labelNotificationText = new System.Windows.Forms.Label();
+        buttonDismissNotifications = new System.Windows.Forms.Button();
         ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+        panelNotifications.SuspendLayout();
         SuspendLayout();
+        // 
+        // panelNotifications
+        // 
+        panelNotifications.BackColor = System.Drawing.Color.FromArgb(230, 243, 255);
+        panelNotifications.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+        panelNotifications.Controls.Add(labelNotificationText);
+        panelNotifications.Controls.Add(buttonDismissNotifications);
+        panelNotifications.Location = new System.Drawing.Point(156, 10);
+        panelNotifications.Name = "panelNotifications";
+        panelNotifications.Padding = new System.Windows.Forms.Padding(10);
+        panelNotifications.Size = new System.Drawing.Size(952, 120);
+        panelNotifications.TabIndex = 20;
+        panelNotifications.Visible = false;
+        // 
+        // labelNotificationText
+        // 
+        labelNotificationText.AutoSize = false;
+        labelNotificationText.Location = new System.Drawing.Point(10, 10);
+        labelNotificationText.Name = "labelNotificationText";
+        labelNotificationText.Size = new System.Drawing.Size(780, 90);
+        labelNotificationText.TabIndex = 0;
+        labelNotificationText.Text = "";
+        labelNotificationText.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular);
+        // 
+        // buttonDismissNotifications
+        // 
+        buttonDismissNotifications.Location = new System.Drawing.Point(820, 40);
+        buttonDismissNotifications.Name = "buttonDismissNotifications";
+        buttonDismissNotifications.Size = new System.Drawing.Size(100, 40);
+        buttonDismissNotifications.TabIndex = 1;
+        buttonDismissNotifications.Text = "Dismiss";
+        buttonDismissNotifications.UseVisualStyleBackColor = true;
+        buttonDismissNotifications.Click += buttonDismissNotifications_Click;
         // 
         // label1
         // 
@@ -115,6 +152,7 @@ partial class CustomerDashboard
         button4.TabIndex = 7;
         button4.Text = "Logout";
         button4.UseVisualStyleBackColor = true;
+        button4.Click += button4_Click_1;
         // 
         // dataGridView1
         // 
@@ -136,6 +174,7 @@ partial class CustomerDashboard
         AutoScaleDimensions = new System.Drawing.SizeF(12F, 30F);
         AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         ClientSize = new System.Drawing.Size(1179, 832);
+        Controls.Add(panelNotifications);
         Controls.Add(dataGridView1);
         Controls.Add(button4);
         Controls.Add(button3);
@@ -147,6 +186,7 @@ partial class CustomerDashboard
         Controls.Add(label1);
         Text = "CustomerDashboard";
         ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+        panelNotifications.ResumeLayout(false);
         ResumeLayout(false);
         PerformLayout();
     }
@@ -164,6 +204,10 @@ partial class CustomerDashboard
     private System.Windows.Forms.TextBox textBox1;
 
     private System.Windows.Forms.Label label1;
+    
+    private System.Windows.Forms.Panel panelNotifications;
+    private System.Windows.Forms.Label labelNotificationText;
+    private System.Windows.Forms.Button buttonDismissNotifications;
 
     #endregion
 }

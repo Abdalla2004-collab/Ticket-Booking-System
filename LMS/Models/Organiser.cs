@@ -1,4 +1,4 @@
-﻿using MySql.Data.MySqlClient;
+using MySql.Data.MySqlClient;
 
 namespace LMS.Models;
 
@@ -56,5 +56,52 @@ public class Organiser : User
         }
 
         return events;
+    }
+        
+    public List<Notification> getUnreadNotifications()
+    {
+        var notifications = new List<Notification>();
+        using (MySqlConnection connection = GlobalManager.GetConnection())
+        {
+            connection.Open();
+            string query = @"SELECT notificationId, userId, message, isRead, createdAt
+                             FROM notifications WHERE userId = @userId AND isRead = 0
+                             ORDER BY createdAt DESC";
+
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@userId", id);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        notifications.Add(new Notification
+                        {
+                            notificationId = Convert.ToInt32(reader["notificationId"]),
+                            userId         = Convert.ToInt32(reader["userId"]),
+                            message        = reader["message"].ToString(),
+                            isRead         = Convert.ToBoolean(reader["isRead"]),
+                            createdAt      = Convert.ToDateTime(reader["createdAt"])
+                        });
+                    }
+                }
+            }
+        }
+        return notifications;
+    }
+
+    public void markNotificationsRead()
+    {
+        using (MySqlConnection connection = GlobalManager.GetConnection())
+        {
+            connection.Open();
+            string query = @"UPDATE notifications SET isRead = 1 WHERE userId = @userId AND isRead = 0";
+
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@userId", id);
+                command.ExecuteNonQuery();
+            }
+        }
     }
 }

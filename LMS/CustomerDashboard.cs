@@ -16,6 +16,7 @@ public partial class CustomerDashboard : Form
         label1.Text = "Welcome, " + GlobalManager.UserName;
         loadCategories();
         loadEvents();
+        loadNotifications();
     }
     private void loadCategories()
     {
@@ -61,6 +62,33 @@ public partial class CustomerDashboard : Form
         dataGridView1.Columns["venueName"].HeaderText = "Venue";
         dataGridView1.Columns["availableTickets"].HeaderText = "Tickets Left";
     }
+    
+    // ── Notifications ────────────────────────────────────────────────────
+    
+    private void loadNotifications()
+    {
+        var customer = (Customer)GlobalManager.CurrentUser;
+        var notifications = customer.getUnreadNotifications();
+
+        if (notifications.Count > 0)
+        {
+            string combined = string.Join("\n", 
+                notifications.ConvertAll(n => $"• {n.message}"));
+            labelNotificationText.Text = combined;
+            panelNotifications.Visible = true;
+        }
+        else
+        {
+            panelNotifications.Visible = false;
+        }
+    }
+
+    private void buttonDismissNotifications_Click(object sender, EventArgs e)
+    {
+        var customer = (Customer)GlobalManager.CurrentUser;
+        customer.markNotificationsRead();
+        panelNotifications.Visible = false;
+    }
 
     private void label2_Click(object sender, EventArgs e)
     {
@@ -69,9 +97,7 @@ public partial class CustomerDashboard : Form
 
     private void button4_Click(object sender, EventArgs e)
     {   
-        GlobalManager.clearCurrentUser();
-        this.Hide();
-        new LoginForm().Show();
+        
     }
 
     private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -117,5 +143,12 @@ public partial class CustomerDashboard : Form
         loadEvents();
         bookForm.BookingCompleted += () => loadEvents();
 
+    }
+
+    private void button4_Click_1(object sender, EventArgs e)
+    {
+        GlobalManager.clearCurrentUser();
+        this.Hide();
+        new LoginForm().Show();
     }
 }

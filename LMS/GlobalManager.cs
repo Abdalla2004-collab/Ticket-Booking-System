@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using dotenv.net;
 using LMS.Models;
 using MySql.Data.MySqlClient;
@@ -56,5 +56,28 @@ public static class GlobalManager
         user.email =  email;
 
         return user;
+    }
+    
+    public static void sendNotification(int userId, string message)
+    {
+        try
+        {
+            using (MySqlConnection connection = GetConnection())
+            {
+                connection.Open();
+                string query = @"INSERT INTO notifications (userId, message) VALUES (@userId, @message)";
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@userId", userId);
+                    command.Parameters.AddWithValue("@message", message);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to send notification: {ex.Message}");
+        }
     }
 }
