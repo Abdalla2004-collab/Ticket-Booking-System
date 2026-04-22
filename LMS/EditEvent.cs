@@ -7,7 +7,7 @@ public partial class EditEvent : Form
     public EditEvent(int eventId)
     {
         InitializeComponent();
-        ThemeManager.ApplyTheme(this);
+        ThemeManager.ApplyLargeTheme(this);
         _eventId = eventId;
         this.Load += EditEvent_Load;
     }
@@ -24,7 +24,7 @@ public partial class EditEvent : Form
         dateTimePicker2.ValueChanged += refreshAvailableTimes;
         comboBoxDuration.SelectedIndexChanged += refreshAvailableTimes;
 
-        ThemeManager.ApplyTheme(this);
+
 
         loadEventDetails();
         isLoading = false;

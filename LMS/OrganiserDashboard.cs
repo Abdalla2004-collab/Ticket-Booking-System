@@ -43,6 +43,7 @@ public partial class OrganiserDashboard : Form
         dataGridViewEvents.Columns["price"].HeaderText = "Price";
         dataGridViewEvents.Columns["status"].HeaderText = "Status";
         dataGridViewEvents.Columns["venueName"].HeaderText = "Venue";
+        dataGridViewEvents.Columns["availableTickets"].HeaderText = "Available";
 
     }
     

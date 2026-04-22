@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace LMS;
 
@@ -38,11 +38,18 @@ partial class LoginForm
         label2 = new System.Windows.Forms.Label();
         textBox1 = new System.Windows.Forms.TextBox();
         label3 = new System.Windows.Forms.Label();
+        panelMain = new System.Windows.Forms.Panel();
+        tableLayoutPanelMain = new System.Windows.Forms.TableLayoutPanel();
+        panelButtons = new System.Windows.Forms.Panel();
+        flowLayoutPanelButtons = new System.Windows.Forms.FlowLayoutPanel();
+        panelMain.SuspendLayout();
+        tableLayoutPanelMain.SuspendLayout();
+        panelButtons.SuspendLayout();
+        flowLayoutPanelButtons.SuspendLayout();
         SuspendLayout();
         // 
-        // button1
-        // 
-        button1.Location = new System.Drawing.Point(403, 464);
+        button1.AutoSize = true;
+        button1.Location = new System.Drawing.Point(3, 3);
         button1.Name = "button1";
         button1.Size = new System.Drawing.Size(180, 50);
         button1.TabIndex = 0;
@@ -52,7 +59,8 @@ partial class LoginForm
         // 
         // button2
         // 
-        button2.Location = new System.Drawing.Point(403, 540);
+        button2.AutoSize = true;
+        button2.Location = new System.Drawing.Point(189, 3);
         button2.Name = "button2";
         button2.Size = new System.Drawing.Size(180, 50);
         button2.TabIndex = 1;
@@ -60,67 +68,134 @@ partial class LoginForm
         button2.UseVisualStyleBackColor = true;
         button2.Click += button2_Click;
         // 
-        // textBox2
-        // 
-        textBox2.Location = new System.Drawing.Point(290, 337);
         textBox2.Name = "textBox2";
         textBox2.PasswordChar = '*';
-        textBox2.Size = new System.Drawing.Size(613, 35);
+        textBox2.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
         textBox2.TabIndex = 2;
         // 
         // label1
         // 
-        label1.Location = new System.Drawing.Point(119, 337);
+        label1.AutoSize = true;
+        label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
+        label1.Location = new System.Drawing.Point(119, 60);
         label1.Name = "label1";
-        label1.Size = new System.Drawing.Size(165, 35);
+        label1.Size = new System.Drawing.Size(120, 35);
         label1.TabIndex = 3;
         label1.Text = "Password";
+        label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
         label1.Click += label1_Click;
         // 
         // label2
         // 
-        label2.Location = new System.Drawing.Point(119, 282);
+        label2.AutoSize = true;
+        label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
+        label2.Location = new System.Drawing.Point(119, 10);
         label2.Name = "label2";
-        label2.Size = new System.Drawing.Size(165, 35);
+        label2.Size = new System.Drawing.Size(120, 35);
         label2.TabIndex = 4;
         label2.Text = "Email";
+        label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
         label2.Click += label2_Click;
         // 
-        // textBox1
-        // 
-        textBox1.Location = new System.Drawing.Point(290, 282);
         textBox1.Name = "textBox1";
         textBox1.PlaceholderText = "Enter your email";
-        textBox1.Size = new System.Drawing.Size(613, 35);
+        textBox1.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
         textBox1.TabIndex = 5;
         textBox1.TextChanged += textBox1_TextChanged;
         // 
         // label3
         // 
-        label3.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)0));
-        label3.Location = new System.Drawing.Point(403, 82);
+        label3.Dock = System.Windows.Forms.DockStyle.Top;
+        label3.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)0));
+        label3.Location = new System.Drawing.Point(0, 0);
         label3.Name = "label3";
-        label3.Size = new System.Drawing.Size(196, 71);
+        label3.Size = new System.Drawing.Size(968, 120);
         label3.TabIndex = 6;
         label3.Text = "Login";
+        label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
         label3.Click += label3_Click_1;
+        // 
+        panelMain.Controls.Add(tableLayoutPanelMain);
+        panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
+        panelMain.Location = new System.Drawing.Point(0, 120);
+        panelMain.Name = "panelMain";
+        panelMain.Size = new System.Drawing.Size(968, 429);
+        panelMain.TabIndex = 7;
+        panelMain.AutoScroll = true;
+        // 
+        // tableLayoutPanelMain
+        // 
+        tableLayoutPanelMain.ColumnCount = 4;
+        tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
+        tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+        tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+        tableLayoutPanelMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
+        tableLayoutPanelMain.Controls.Add(label2, 1, 1);
+        tableLayoutPanelMain.Controls.Add(textBox1, 2, 1);
+        tableLayoutPanelMain.Controls.Add(label1, 1, 2);
+        tableLayoutPanelMain.Controls.Add(textBox2, 2, 2);
+        tableLayoutPanelMain.Dock = System.Windows.Forms.DockStyle.Fill;
+        tableLayoutPanelMain.Location = new System.Drawing.Point(0, 0);
+        tableLayoutPanelMain.Name = "tableLayoutPanelMain";
+        tableLayoutPanelMain.RowCount = 4;
+        tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+        tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+        tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 80F));
+        tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+        tableLayoutPanelMain.Size = new System.Drawing.Size(968, 429);
+        tableLayoutPanelMain.TabIndex = 0;
+        // 
+        // panelButtons
+        // 
+        TableLayoutPanel tableLayoutPanelButtons = new TableLayoutPanel();
+        tableLayoutPanelButtons.ColumnCount = 3;
+        tableLayoutPanelButtons.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+        tableLayoutPanelButtons.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        tableLayoutPanelButtons.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+        tableLayoutPanelButtons.RowCount = 1;
+        tableLayoutPanelButtons.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+        tableLayoutPanelButtons.Controls.Add(flowLayoutPanelButtons, 1, 0);
+        tableLayoutPanelButtons.Dock = DockStyle.Fill;
+        
+        panelButtons.Controls.Add(tableLayoutPanelButtons);
+        panelButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
+        panelButtons.Location = new System.Drawing.Point(0, 549);
+        panelButtons.Name = "panelButtons";
+        panelButtons.Size = new System.Drawing.Size(968, 120);
+        panelButtons.TabIndex = 6;
+        // 
+        // flowLayoutPanelButtons
+        // 
+        flowLayoutPanelButtons.AutoSize = true;
+        flowLayoutPanelButtons.Controls.Add(button1);
+        flowLayoutPanelButtons.Controls.Add(button2);
+        flowLayoutPanelButtons.Dock = System.Windows.Forms.DockStyle.Fill;
+        flowLayoutPanelButtons.Location = new System.Drawing.Point(296, 30);
+        flowLayoutPanelButtons.Name = "flowLayoutPanelButtons";
+        flowLayoutPanelButtons.Size = new System.Drawing.Size(375, 56);
+        flowLayoutPanelButtons.TabIndex = 0;
+        flowLayoutPanelButtons.WrapContents = false;
+        flowLayoutPanelButtons.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
         // 
         // LoginForm
         // 
-        AutoScaleDimensions = new System.Drawing.SizeF(12F, 30F);
-        AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        ClientSize = new System.Drawing.Size(968, 669);
+        this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+        this.MinimumSize = new System.Drawing.Size(600, 500);
+        this.ClientSize = new System.Drawing.Size(968, 669);
+        this.AcceptButton = this.button1;
+        Text = "Ticket Booking System - Login";
+        Controls.Add(panelMain);
+        Controls.Add(panelButtons);
         Controls.Add(label3);
-        Controls.Add(textBox1);
-        Controls.Add(label2);
-        Controls.Add(label1);
-        Controls.Add(textBox2);
-        Controls.Add(button2);
-        Controls.Add(button1);
-        Text = "LoginForm";
         Load += LoginForm_Load;
+        panelMain.ResumeLayout(false);
+        tableLayoutPanelMain.ResumeLayout(false);
+        tableLayoutPanelMain.PerformLayout();
+        panelButtons.ResumeLayout(false);
+        panelButtons.PerformLayout();
+        flowLayoutPanelButtons.ResumeLayout(false);
+        flowLayoutPanelButtons.PerformLayout();
         ResumeLayout(false);
-        PerformLayout();
     }
 
     private System.Windows.Forms.Label label3;
@@ -132,6 +207,10 @@ partial class LoginForm
     private System.Windows.Forms.TextBox textBox1;
 
     private System.Windows.Forms.Button button1;
+    private System.Windows.Forms.Panel panelMain;
+    private System.Windows.Forms.TableLayoutPanel tableLayoutPanelMain;
+    private System.Windows.Forms.Panel panelButtons;
+    private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelButtons;
 
     #endregion
 }

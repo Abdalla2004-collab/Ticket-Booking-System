@@ -13,6 +13,8 @@ namespace LMS
         private static readonly Font DefaultFont = new Font("Segoe UI", 10F, FontStyle.Regular);
         private static readonly Font BoldFont = new Font("Segoe UI", 10F, FontStyle.Bold);
         private static readonly Font TitleFont = new Font("Segoe UI", 16F, FontStyle.Bold);
+        private static readonly Font InputFontLarge = new Font("Segoe UI", 12F, FontStyle.Regular);
+        private static readonly Font LabelFontLarge = new Font("Segoe UI", 12F, FontStyle.Bold);
 
         public static void ApplyTheme(Form form)
         {
@@ -23,6 +25,32 @@ namespace LMS
             foreach (Control control in form.Controls)
             {
                 ApplyControlTheme(control);
+            }
+        }
+
+        public static void ApplyLargeTheme(Form form)
+        {
+            ApplyTheme(form);
+            ScaleControls(form, 1.2f);
+        }
+
+        private static void ScaleControls(Control parent, float factor)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                if (control is Label lbl && lbl.Font.Size < 16)
+                {
+                    lbl.Font = new Font(lbl.Font.FontFamily, lbl.Font.Size * factor, lbl.Font.Style);
+                }
+                else if (control is TextBox || control is MaskedTextBox || control is ComboBox || control is Button)
+                {
+                    control.Font = new Font(control.Font.FontFamily, control.Font.Size * factor, control.Font.Style);
+                }
+                
+                if (control.HasChildren)
+                {
+                    ScaleControls(control, factor);
+                }
             }
         }
 
@@ -38,6 +66,14 @@ namespace LMS
                 btn.Cursor = Cursors.Hand;
                 btn.MouseEnter += (s, e) => btn.BackColor = Color.FromArgb(0, 102, 204);
                 btn.MouseLeave += (s, e) => btn.BackColor = PrimaryBlue;
+            }
+            else if (control is ComboBox cb)
+            {
+                cb.BackColor = Color.White;
+                cb.ForeColor = TextBlack;
+                cb.Font = DefaultFont;
+                cb.FlatStyle = FlatStyle.Flat;
+                cb.DropDownStyle = ComboBoxStyle.DropDownList;
             }
             else if (control is TextBox || control is MaskedTextBox)
             {
@@ -65,8 +101,13 @@ namespace LMS
             }
             else if (control is DataGridView dgv)
             {
+                dgv.GridColor = Color.LightGray;
+                dgv.BorderStyle = BorderStyle.None;
+                dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dgv.ReadOnly = true;
+                dgv.AllowUserToAddRows = false;
+                dgv.MultiSelect = false;
                 dgv.BackgroundColor = WhiteColor;
-                dgv.BorderStyle = BorderStyle.FixedSingle;
                 dgv.ColumnHeadersDefaultCellStyle.BackColor = PrimaryBlue;
                 dgv.ColumnHeadersDefaultCellStyle.ForeColor = WhiteColor;
                 dgv.ColumnHeadersDefaultCellStyle.Font = BoldFont;
@@ -76,7 +117,8 @@ namespace LMS
                 dgv.DefaultCellStyle.SelectionForeColor = TextBlack;
                 dgv.EnableHeadersVisualStyles = false;
                 dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 245);
-                dgv.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                // Allow the designer-set Dock property to persist
+                // dgv.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
                 
                 dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
                 dgv.GridColor = Color.LightGray;

@@ -10,7 +10,7 @@ public partial class LoginForm : Form
     public LoginForm()
     {
         InitializeComponent();
-        ThemeManager.ApplyTheme(this);
+        ThemeManager.ApplyLargeTheme(this);
     }
 
     private void button1_Click(object sender, EventArgs e)

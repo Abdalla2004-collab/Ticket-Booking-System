@@ -8,7 +8,7 @@ public partial class AddEvents : Form
     public AddEvents()
     {
         InitializeComponent();
-        ThemeManager.ApplyTheme(this);
+        ThemeManager.ApplyLargeTheme(this);
         this.Load += AddEvents_Load;
     }
 
@@ -28,7 +28,7 @@ public partial class AddEvents : Form
         dateTimePicker2.ValueChanged += refreshAvailableTimes;
         comboBoxDuration.SelectedIndexChanged += refreshAvailableTimes;
 
-        ThemeManager.ApplyTheme(this);
+
     }
 
     private void refreshAvailableTimes(object? sender, EventArgs e)

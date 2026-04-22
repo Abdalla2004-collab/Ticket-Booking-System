@@ -24,7 +24,8 @@ public class Organiser : User
 
             string query = @"SELECT e.eventId, e.title, e.category, e.eventDate,
                                     e.eventTime, e.durationMinutes, e.totalTickets, e.price, e.status,
-                                    v.name AS venueName
+                                    v.name AS venueName,
+                                    e.totalTickets - COALESCE((SELECT SUM(b.quantity) FROM bookings b WHERE b.eventId = e.eventId AND b.status = 'Confirmed'), 0) as availableTickets
                              FROM events e
                              JOIN venues v ON e.venueId = v.venueId
                              WHERE e.organiserId = @organiserId
@@ -49,7 +50,8 @@ public class Organiser : User
                             totalTickets = Convert.ToInt32(reader["totalTickets"]),
                             price        = Convert.ToDecimal(reader["price"]),
                             status       = reader["status"].ToString()!,
-                            venueName    = reader["venueName"].ToString()!
+                            venueName    = reader["venueName"].ToString()!,
+                            availableTickets = Convert.ToInt32(reader["availableTickets"])
                         });
                     }
                 }

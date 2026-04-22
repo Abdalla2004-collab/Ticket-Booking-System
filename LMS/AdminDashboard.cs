@@ -92,7 +92,7 @@ public partial class AdminDashboard : Form
         dataGridView1.Columns["category"].HeaderText = "Category";
         dataGridView1.Columns["eventDate"].HeaderText = "Date";
         dataGridView1.Columns["eventTime"].HeaderText = "Time";
-        dataGridView1.Columns["totalTickets"].HeaderText = "Total Tickets";
+        dataGridView1.Columns["availableTickets"].HeaderText = "Available Tickets";
         dataGridView1.Columns["price"].HeaderText = "Price";
         dataGridView1.Columns["status"].HeaderText = "Status";
         dataGridView1.Columns["venueName"].HeaderText = "Venue Name";
@@ -100,7 +100,7 @@ public partial class AdminDashboard : Form
     }
     
 
-    private void button2_Click_1(object sender, EventArgs e)
+    private void buttonLogoutShared_Click(object sender, EventArgs e)
     {
         GlobalManager.clearCurrentUser();
         LoginForm loginForm = new LoginForm();
@@ -109,21 +109,7 @@ public partial class AdminDashboard : Form
     }
     
 
-    private void button3_Click(object sender, EventArgs e)
-    {
-        GlobalManager.clearCurrentUser();
-        LoginForm loginForm = new LoginForm();
-        loginForm.Show();
-        this.Hide();
-    }
 
-    private void button5_Click(object sender, EventArgs e)
-    {
-        GlobalManager.clearCurrentUser();
-        LoginForm loginForm = new LoginForm();
-        loginForm.Show();
-        this.Hide();
-    }
 
     private void button1_Click(object sender, EventArgs e)
     {
@@ -337,11 +323,4 @@ public partial class AdminDashboard : Form
         loadDiscounts();
     }
     
-    private void button8_Click(object sender, EventArgs e)
-    {
-        GlobalManager.clearCurrentUser();
-        LoginForm loginForm = new LoginForm();
-        loginForm.Show();
-        this.Hide();
-    }
 }

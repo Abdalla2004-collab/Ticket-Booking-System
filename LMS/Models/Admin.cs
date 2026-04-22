@@ -67,11 +67,12 @@ public class Admin : User
         {
             connection.Open();
             string query = @"SELECT e.eventId, e.organiserId, e.title, e.category, e.eventDate, e.eventTime, e.durationMinutes, e.totalTickets,
+                                (e.totalTickets - COALESCE((SELECT SUM(quantity) FROM bookings WHERE eventId = e.eventId AND status = 'Confirmed'), 0)) as availableTickets,
 		                        e.price, e.status, v.name as venueName, u.fullname as organiserName
                                 from events e
                                 Join Venues v on e.venueId = v.venueId
                                 join users u on u.id = e.organiserId
-                                order by case when e.status = 'Pending' then 'Approved' else 'Rejected' end, status";
+                                order by case when e.status = 'Pending' then 0 else 1 end, status";
 
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
@@ -79,7 +80,7 @@ public class Admin : User
                 {
                     while (reader.Read())
                     {
-                        events.Add(new Events
+        events.Add(new Events
                         {
                             eventId      = Convert.ToInt32(reader["eventId"]),
                             organiserId  = Convert.ToInt32(reader["organiserId"]),
@@ -89,6 +90,7 @@ public class Admin : User
                             eventTime    = TimeSpan.Parse(reader["eventTime"].ToString()),
                             durationMinutes = Convert.ToInt32(reader["durationMinutes"]),
                             totalTickets = Convert.ToInt32(reader["totalTickets"]),
+                            availableTickets = Convert.ToInt32(reader["availableTickets"]),
                             price        = Convert.ToDecimal(reader["price"]),
                             status       = reader["status"].ToString(),
                             venueName    = reader["venueName"].ToString()

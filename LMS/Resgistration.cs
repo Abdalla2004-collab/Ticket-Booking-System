@@ -8,7 +8,7 @@ public partial class Resgistration : Form
     public Resgistration()
     {
         InitializeComponent();
-        ThemeManager.ApplyTheme(this);
+        ThemeManager.ApplyLargeTheme(this);
     }
 
     private void Resgistration_Load(object sender, EventArgs e)
