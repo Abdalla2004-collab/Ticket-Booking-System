@@ -18,6 +18,49 @@ public partial class AdminDashboard : Form
         getEvents();
         loadAllUsers();
         loadDiscounts();
+        loadAnalyticsTab();
+    }
+
+    private void loadAnalyticsTab()
+    {
+        int totalUsers = 0;
+        int activeEvents = 0;
+        decimal totalRevenue = 0m;
+        int totalTicketsSold = 0;
+        
+        using (var connection = GlobalManager.GetConnection())
+        {
+            connection.Open();
+            string statsQuery = @"
+                SELECT 
+                    (SELECT COUNT(*) FROM users) as UsersCount,
+                    (SELECT COUNT(*) FROM events WHERE status = 'Approved') as EventsCount,
+                    (SELECT COALESCE(SUM(totalPrice), 0) FROM bookings WHERE status = 'Confirmed') as Revenue,
+                    (SELECT COALESCE(SUM(quantity), 0) FROM bookings WHERE status = 'Confirmed') as TicketsSold;
+            ";
+            
+            using (var cmd = new MySqlCommand(statsQuery, connection))
+            using (var reader = cmd.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    totalUsers = Convert.ToInt32(reader["UsersCount"]);
+                    activeEvents = Convert.ToInt32(reader["EventsCount"]);
+                    totalRevenue = Convert.ToDecimal(reader["Revenue"]);
+                    totalTicketsSold = Convert.ToInt32(reader["TicketsSold"]);
+                }
+            }
+        }
+
+        string analyticsText = $"Overall Business Performance\n\n" +
+                               $"Total Users: {totalUsers}\n" +
+                               $"Approved Events: {activeEvents}\n" +
+                               $"Total Tickets Sold: {totalTicketsSold}\n" +
+                               $"Total Net Revenue: £{totalRevenue:F2}";
+
+        lblAnalytics.Text = analyticsText;
+        
+        ThemeManager.ApplyTheme(this);
     }
 
     public void loadAllUsers()
@@ -135,15 +178,65 @@ public partial class AdminDashboard : Form
             MessageBox.Show("Please select an event first");
             return;
         }
-        var admin = (Admin)GlobalManager.CurrentUser;
+
+        string currentStatus = dataGridView1.SelectedRows[0].Cells["status"].Value.ToString();
         int eventId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["eventId"].Value);
         int organiserId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["organiserId"].Value);
-        string title = dataGridView1.SelectedRows[0].Cells["title"].Value.ToString();
+        string title = dataGridView1.SelectedRows[0].Cells["title"].Value?.ToString() ?? "";
+
+
+        if (currentStatus == "Rejected")
+        {
+            MessageBox.Show("The event has already been rejected");
+            return;
+        }
+        if (currentStatus == "Approved")
+        {
+            if (MessageBox.Show("This event is already approved. Rejecting it will forcefully cancel it and send refund notifications to all buyers. Proceed?", "Confirm Rejection", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+            
+            using (var connection = GlobalManager.GetConnection())
+            {
+                connection.Open();
+                
+                string getCustomersQuery = "SELECT DISTINCT customerId FROM bookings WHERE eventId = @eventId AND status = 'Confirmed'";
+                var customersToNotify = new List<int>();
+                using (var cmd = new MySqlCommand(getCustomersQuery, connection))
+                {
+                    cmd.Parameters.AddWithValue("@eventId", eventId);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            customersToNotify.Add(Convert.ToInt32(reader["customerId"]));
+                        }
+                    }
+                }
+
+                foreach (var cid in customersToNotify)
+                {
+                    GlobalManager.sendNotification(cid, $"The event '{title}' has been cancelled by an administrator. A refund is processing.");
+                }
+
+                string updateBookings = "UPDATE bookings SET status = 'Cancelled' WHERE eventId = @eventId";
+                using (var cmd = new MySqlCommand(updateBookings, connection))
+                {
+                    cmd.Parameters.AddWithValue("@eventId", eventId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        else
+        {
+            if (MessageBox.Show("Are you sure you want to reject this event?", "Confirm Rejection", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+        }
+
+        var admin = (Admin)GlobalManager.CurrentUser;
         
         admin.updateEventStatus(eventId, "Rejected");
         
         GlobalManager.sendNotification(organiserId, $"Your event '{title}' has been rejected.");
         
+        loadAnalyticsTab();
         getEvents();
     }
     private void button4_Click(object sender, EventArgs e)
@@ -168,6 +261,21 @@ public partial class AdminDashboard : Form
             MessageBox.Show("Please select an event first");
             return;
         }
+
+        string currentStatus = dataGridView1.SelectedRows[0].Cells["status"].Value.ToString();
+        if (currentStatus == "Approved")
+        {
+            MessageBox.Show("This event is already approved.");
+            return;
+        }
+        if (currentStatus == "Rejected")
+        {
+            MessageBox.Show("Rejected events cannot be approved unless the organiser updates them.");
+            return;
+        }
+
+        if (MessageBox.Show("Are you sure you want to approve this event?", "Confirm Approval", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+
         var admin = (Admin)GlobalManager.CurrentUser;
         int eventId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["eventId"].Value);
         int organiserId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["organiserId"].Value);
@@ -178,6 +286,8 @@ public partial class AdminDashboard : Form
         GlobalManager.sendNotification(organiserId, $"Your event '{title}' has been approved!");
         
         getEvents();
+        loadAnalyticsTab();
+
     }
     
     private void loadDiscounts()

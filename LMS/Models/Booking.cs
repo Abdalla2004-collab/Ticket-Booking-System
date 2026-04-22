@@ -1,4 +1,4 @@
-﻿namespace LMS.Models;
+namespace LMS.Models;
 
 public class Booking
 {
@@ -11,6 +11,7 @@ public class Booking
     public string status { get; set; } = "Confirmed";
     public string   eventTitle  { get; set; } = "";
     public string   venueName   { get; set; } = "";
+    public string   venueAddress { get; set; } = "";
     public DateTime eventDate   { get; set; }
     public TimeSpan eventTime   { get; set; }
 }

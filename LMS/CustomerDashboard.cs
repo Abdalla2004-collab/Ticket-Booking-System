@@ -126,9 +126,9 @@ public partial class CustomerDashboard : Form
         int eventId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["eventId"].Value);
         int available = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["availableTickets"].Value);
         decimal price = Convert.ToDecimal(dataGridView1.SelectedRows[0].Cells["price"].Value);
-        string title = dataGridView1.SelectedRows[0].Cells["title"].Value.ToString();
+        string title = dataGridView1.SelectedRows[0].Cells["title"].Value.ToString() ?? "";
 
-        if (available < 0)
+        if (available <= 0)
         {
             MessageBox.Show("Sorry, this event is sold out.");
             return;

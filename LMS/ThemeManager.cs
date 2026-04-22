@@ -36,13 +36,14 @@ namespace LMS
                 btn.FlatAppearance.BorderSize = 0;
                 btn.Font = BoldFont;
                 btn.Cursor = Cursors.Hand;
+                btn.MouseEnter += (s, e) => btn.BackColor = Color.FromArgb(0, 102, 204);
+                btn.MouseLeave += (s, e) => btn.BackColor = PrimaryBlue;
             }
             else if (control is TextBox || control is MaskedTextBox)
             {
                 control.BackColor = WhiteColor;
                 control.ForeColor = TextBlack;
                 control.Font = DefaultFont;
-                control.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
                 
                 if (control is TextBox tb)
                 {

@@ -38,8 +38,6 @@ partial class AddEvents
         textBoxTitle = new System.Windows.Forms.TextBox();
         label3 = new System.Windows.Forms.Label();
         label4 = new System.Windows.Forms.Label();
-        dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-        dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
         textBoxTickets = new System.Windows.Forms.TextBox();
         label1 = new System.Windows.Forms.Label();
         textBoxPrice = new System.Windows.Forms.TextBox();
@@ -48,6 +46,10 @@ partial class AddEvents
         label6 = new System.Windows.Forms.Label();
         comboBoxCategory = new System.Windows.Forms.ComboBox();
         label7 = new System.Windows.Forms.Label();
+        dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
+        comboBoxTime = new System.Windows.Forms.ComboBox();
+        comboBoxDuration = new System.Windows.Forms.ComboBox();
+        label5 = new System.Windows.Forms.Label();
         SuspendLayout();
         // 
         // buttonBack
@@ -113,35 +115,16 @@ partial class AddEvents
         label4.TabIndex = 9;
         label4.Text = "Time";
         // 
-        // dateTimePicker1
-        // 
-        dateTimePicker1.CustomFormat = "HH:mm:ss";
-        dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-        dateTimePicker1.Location = new System.Drawing.Point(364, 372);
-        dateTimePicker1.Name = "dateTimePicker1";
-        dateTimePicker1.ShowUpDown = true;
-        dateTimePicker1.Size = new System.Drawing.Size(268, 35);
-        dateTimePicker1.TabIndex = 10;
-        dateTimePicker1.ValueChanged += dateTimePicker1_ValueChanged;
-        // 
-        // dateTimePicker2
-        // 
-        dateTimePicker2.Location = new System.Drawing.Point(364, 298);
-        dateTimePicker2.Name = "dateTimePicker2";
-        dateTimePicker2.Size = new System.Drawing.Size(268, 35);
-        dateTimePicker2.TabIndex = 11;
-        dateTimePicker2.ValueChanged += dateTimePicker2_ValueChanged;
-        // 
         // textBoxTickets
         // 
-        textBoxTickets.Location = new System.Drawing.Point(364, 450);
+        textBoxTickets.Location = new System.Drawing.Point(364, 519);
         textBoxTickets.Name = "textBoxTickets";
         textBoxTickets.Size = new System.Drawing.Size(268, 35);
         textBoxTickets.TabIndex = 12;
         // 
         // label1
         // 
-        label1.Location = new System.Drawing.Point(205, 453);
+        label1.Location = new System.Drawing.Point(205, 519);
         label1.Name = "label1";
         label1.Size = new System.Drawing.Size(153, 35);
         label1.TabIndex = 13;
@@ -149,14 +132,14 @@ partial class AddEvents
         // 
         // textBoxPrice
         // 
-        textBoxPrice.Location = new System.Drawing.Point(364, 539);
+        textBoxPrice.Location = new System.Drawing.Point(364, 605);
         textBoxPrice.Name = "textBoxPrice";
         textBoxPrice.Size = new System.Drawing.Size(268, 35);
         textBoxPrice.TabIndex = 14;
         // 
         // price
         // 
-        price.Location = new System.Drawing.Point(205, 539);
+        price.Location = new System.Drawing.Point(205, 606);
         price.Name = "price";
         price.Size = new System.Drawing.Size(153, 35);
         price.TabIndex = 15;
@@ -166,15 +149,16 @@ partial class AddEvents
         // 
         // comboBoxVenue
         // 
+        comboBoxVenue.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
         comboBoxVenue.FormattingEnabled = true;
-        comboBoxVenue.Location = new System.Drawing.Point(364, 622);
+        comboBoxVenue.Location = new System.Drawing.Point(364, 681);
         comboBoxVenue.Name = "comboBoxVenue";
         comboBoxVenue.Size = new System.Drawing.Size(559, 38);
         comboBoxVenue.TabIndex = 16;
         // 
         // label6
         // 
-        label6.Location = new System.Drawing.Point(205, 625);
+        label6.Location = new System.Drawing.Point(205, 684);
         label6.Name = "label6";
         label6.Size = new System.Drawing.Size(153, 35);
         label6.TabIndex = 17;
@@ -184,25 +168,62 @@ partial class AddEvents
         // comboBoxCategory
         // 
         comboBoxCategory.FormattingEnabled = true;
-        comboBoxCategory.Location = new System.Drawing.Point(364, 711);
+        comboBoxCategory.Location = new System.Drawing.Point(364, 759);
         comboBoxCategory.Name = "comboBoxCategory";
         comboBoxCategory.Size = new System.Drawing.Size(268, 38);
         comboBoxCategory.TabIndex = 18;
         // 
         // label7
         // 
-        label7.Location = new System.Drawing.Point(205, 714);
+        label7.Location = new System.Drawing.Point(205, 760);
         label7.Name = "label7";
         label7.Size = new System.Drawing.Size(153, 35);
         label7.TabIndex = 19;
         label7.Text = "Cetegory";
         label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
         // 
+        // dateTimePicker2
+        // 
+        dateTimePicker2.Location = new System.Drawing.Point(364, 298);
+        dateTimePicker2.Name = "dateTimePicker2";
+        dateTimePicker2.Size = new System.Drawing.Size(268, 35);
+        dateTimePicker2.TabIndex = 11;
+        dateTimePicker2.ValueChanged += dateTimePicker2_ValueChanged;
+        // 
+        // comboBoxTime
+        // 
+        comboBoxTime.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+        comboBoxTime.FormattingEnabled = true;
+        comboBoxTime.Location = new System.Drawing.Point(364, 372);
+        comboBoxTime.Name = "comboBoxTime";
+        comboBoxTime.Size = new System.Drawing.Size(268, 38);
+        comboBoxTime.TabIndex = 20;
+        // 
+        // comboBoxDuration
+        // 
+        comboBoxDuration.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+        comboBoxDuration.FormattingEnabled = true;
+        comboBoxDuration.Location = new System.Drawing.Point(364, 447);
+        comboBoxDuration.Name = "comboBoxDuration";
+        comboBoxDuration.Size = new System.Drawing.Size(268, 38);
+        comboBoxDuration.TabIndex = 21;
+        // 
+        // label5
+        // 
+        label5.Location = new System.Drawing.Point(205, 450);
+        label5.Name = "label5";
+        label5.Size = new System.Drawing.Size(153, 35);
+        label5.TabIndex = 22;
+        label5.Text = "Duration";
+        // 
         // AddEvents
         // 
         AutoScaleDimensions = new System.Drawing.SizeF(12F, 30F);
         AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         ClientSize = new System.Drawing.Size(1300, 1103);
+        Controls.Add(label5);
+        Controls.Add(comboBoxDuration);
+        Controls.Add(comboBoxTime);
         Controls.Add(label7);
         Controls.Add(comboBoxCategory);
         Controls.Add(label6);
@@ -212,7 +233,6 @@ partial class AddEvents
         Controls.Add(label1);
         Controls.Add(textBoxTickets);
         Controls.Add(dateTimePicker2);
-        Controls.Add(dateTimePicker1);
         Controls.Add(label4);
         Controls.Add(label3);
         Controls.Add(textBoxTitle);
@@ -224,6 +244,13 @@ partial class AddEvents
         ResumeLayout(false);
         PerformLayout();
     }
+
+    private System.Windows.Forms.ComboBox comboBoxDuration;
+    private System.Windows.Forms.Label label5;
+
+    private System.Windows.Forms.DateTimePicker dateTimePicker2;
+
+    private System.Windows.Forms.ComboBox comboBoxTime;
 
     private System.Windows.Forms.ComboBox comboBoxCategory;
     private System.Windows.Forms.Label label7;
@@ -238,9 +265,6 @@ partial class AddEvents
     private System.Windows.Forms.Label label1;
 
     private System.Windows.Forms.TextBox textBoxTickets;
-
-    private System.Windows.Forms.DateTimePicker dateTimePicker1;
-    private System.Windows.Forms.DateTimePicker dateTimePicker2;
 
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Label label4;

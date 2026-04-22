@@ -42,6 +42,8 @@ partial class OrganiserDashboard
         panelNotifications = new System.Windows.Forms.Panel();
         labelNotificationText = new System.Windows.Forms.Label();
         buttonDismissNotifications = new System.Windows.Forms.Button();
+        btnStats = new System.Windows.Forms.Button();
+        btnCancelEvent = new System.Windows.Forms.Button();
         ((System.ComponentModel.ISupportInitialize)dataGridViewEvents).BeginInit();
         panelNotifications.SuspendLayout();
         SuspendLayout();
@@ -143,6 +145,26 @@ partial class OrganiserDashboard
         buttonEditEvent.UseVisualStyleBackColor = true;
         buttonEditEvent.Click += buttonEditEvent_Click;
         // 
+        // btnStats
+        // 
+        btnStats.Location = new System.Drawing.Point(200, 729);
+        btnStats.Name = "btnStats";
+        btnStats.Size = new System.Drawing.Size(300, 70);
+        btnStats.TabIndex = 8;
+        btnStats.Text = "View Event Stats";
+        btnStats.UseVisualStyleBackColor = true;
+        btnStats.Click += BtnStats_Click;
+        // 
+        // btnCancelEvent
+        // 
+        btnCancelEvent.Location = new System.Drawing.Point(200, 823);
+        btnCancelEvent.Name = "btnCancelEvent";
+        btnCancelEvent.Size = new System.Drawing.Size(300, 70);
+        btnCancelEvent.TabIndex = 9;
+        btnCancelEvent.Text = "Cancel Event";
+        btnCancelEvent.UseVisualStyleBackColor = true;
+        btnCancelEvent.Click += BtnCancelEvent_Click;
+        // 
         // dataGridViewEvents
         // 
         dataGridViewEvents.AllowUserToAddRows = false;
@@ -167,6 +189,8 @@ partial class OrganiserDashboard
         Controls.Add(button3);
         Controls.Add(button2);
         Controls.Add(labelWelcome);
+        Controls.Add(btnStats);
+        Controls.Add(btnCancelEvent);
         Text = "OrganiserDashboard";
         ((System.ComponentModel.ISupportInitialize)dataGridViewEvents).EndInit();
         panelNotifications.ResumeLayout(false);
@@ -189,6 +213,9 @@ partial class OrganiserDashboard
     private System.Windows.Forms.Panel panelNotifications;
     private System.Windows.Forms.Label labelNotificationText;
     private System.Windows.Forms.Button buttonDismissNotifications;
+    
+    private System.Windows.Forms.Button btnStats;
+    private System.Windows.Forms.Button btnCancelEvent;
 
     #endregion
 }

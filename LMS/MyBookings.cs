@@ -33,6 +33,7 @@ public partial class MyBookings : Form
 
         dataGridView1.Columns["eventTitle"].HeaderText = "Event";
         dataGridView1.Columns["venueName"].HeaderText = "Venue";
+        dataGridView1.Columns["venueAddress"].HeaderText = "Address";
         dataGridView1.Columns["eventDate"].HeaderText = "Date";
         dataGridView1.Columns["eventTime"].HeaderText = "Time";
         dataGridView1.Columns["quantity"].HeaderText = "Tickets";
@@ -67,6 +68,7 @@ public partial class MyBookings : Form
         if (eventDate < DateTime.Today)
         {
             MessageBox.Show("You cannot cancel a booking for an event that has already taken place.");
+            return;
         }
         
         DialogResult confirm = MessageBox.Show("Are you sure you want to cancel this booking?",

@@ -1,4 +1,4 @@
-﻿namespace LMS.Models;
+namespace LMS.Models;
 
 public class Events
 {
@@ -7,6 +7,7 @@ public class Events
     public string   category         { get; set; } = "";
     public DateTime eventDate        { get; set; }
     public TimeSpan eventTime        { get; set; }
+    public int      durationMinutes  { get; set; } = 60;
     public int      totalTickets     { get; set; }
     public decimal  price            { get; set; }
     public string   status           { get; set; } = "Pending";

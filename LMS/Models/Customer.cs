@@ -22,7 +22,7 @@ public class Customer : User
         {
             connection.Open();
 
-            string query = @"SELECT e.eventId, e.title, e.category, e.eventDate, e.eventTime, e.price, e.status,
+            string query = @"SELECT e.eventId, e.title, e.category, e.eventDate, e.eventTime, e.durationMinutes, e.price, e.status,
                             v.name as venueName,
                             e.totalTickets - COALESCE((SELECT SUM(b.quantity) FROM bookings b Where b.eventId = e.eventId
                             AND b.status = 'Confirmed'), 0) as availableTickets FROM events e
@@ -49,6 +49,7 @@ public class Customer : User
                             category = reader["category"].ToString(),
                             eventDate = Convert.ToDateTime(reader["eventDate"]),
                             eventTime = TimeSpan.Parse(reader["eventTime"].ToString()),
+                            durationMinutes = Convert.ToInt32(reader["durationMinutes"]),
                             price = Convert.ToDecimal(reader["price"]),
                             status = reader["status"].ToString(),
                             venueName = reader["venueName"].ToString(),
@@ -114,7 +115,7 @@ public class Customer : User
             connection.Open();
 
             string query = @"select b.bookingId, b.eventId, b.quantity, b.totalPrice, b.bookingDate, b.status,
-                                e.title as eventTitle, e.eventDate, e.eventTime, v.name as venueName
+                                e.title as eventTitle, e.eventDate, e.eventTime, v.name as venueName, v.address as venueAddress
                                 from bookings b
                                 JOIN events e on b.eventId = e.eventId
                                 JOIN venues v on e.venueId = v.venueId
@@ -139,6 +140,7 @@ public class Customer : User
                             status = reader["status"].ToString(),
                             eventTitle = reader["eventTitle"].ToString(),
                             venueName = reader["venueName"].ToString(),
+                            venueAddress = reader["venueAddress"].ToString(),
                             eventDate = Convert.ToDateTime(reader["eventDate"]),
                             eventTime = TimeSpan.Parse(reader["eventTime"].ToString()),
                         });

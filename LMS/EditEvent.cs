@@ -11,12 +11,104 @@ public partial class EditEvent : Form
         _eventId = eventId;
         this.Load += EditEvent_Load;
     }
+    private bool isLoading = true;
+
     private void EditEvent_Load(object sender, EventArgs e)
     {
         loadVenues();
         loadCategories();
+
+        comboBoxDuration.Items.AddRange(new object[] { 30, 60, 90, 120, 150, 180, 240, 300 });
+
+        comboBoxVenue.SelectedIndexChanged += refreshAvailableTimes;
+        dateTimePicker2.ValueChanged += refreshAvailableTimes;
+        comboBoxDuration.SelectedIndexChanged += refreshAvailableTimes;
+
+        ThemeManager.ApplyTheme(this);
+
         loadEventDetails();
+        isLoading = false;
     }
+
+    private void refreshAvailableTimes(object? sender, EventArgs e)
+    {
+        if (comboBoxVenue.SelectedValue == null || comboBoxDuration.SelectedItem == null) return;
+        
+        int venueId = (int)comboBoxVenue.SelectedValue;
+        string dateStr = dateTimePicker2.Value.ToString("yyyy-MM-dd");
+        int duration = (int)comboBoxDuration.SelectedItem;
+
+        var existingEvents = new List<(TimeSpan start, int dur)>();
+
+        using (var connection = GlobalManager.GetConnection())
+        {
+            connection.Open();
+            string query = "SELECT eventTime, durationMinutes FROM events WHERE venueId = @vId AND eventDate = @d AND eventId != @eId AND status != 'Rejected'";
+            using (var cmd = new MySql.Data.MySqlClient.MySqlCommand(query, connection))
+            {
+                cmd.Parameters.AddWithValue("@vId", venueId);
+                cmd.Parameters.AddWithValue("@d", dateStr);
+                cmd.Parameters.AddWithValue("@eId", _eventId);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        existingEvents.Add((TimeSpan.Parse(reader["eventTime"].ToString()!), Convert.ToInt32(reader["durationMinutes"])));
+                    }
+                }
+            }
+        }
+
+        string previousSelection = comboBoxTime.SelectedItem?.ToString() ?? "";
+        comboBoxTime.Items.Clear();
+        TimeSpan currentSlot = TimeSpan.FromHours(8);
+        TimeSpan endOfDay = TimeSpan.FromHours(22);
+
+        while (currentSlot < endOfDay)
+        {
+            TimeSpan proposedEnd = currentSlot.Add(TimeSpan.FromMinutes(duration));
+            
+            if (proposedEnd > endOfDay)
+            {
+                currentSlot = currentSlot.Add(TimeSpan.FromMinutes(30));
+                continue;
+            }
+
+            bool overlap = false;
+            foreach (var ev in existingEvents)
+            {
+                TimeSpan evEnd = ev.start.Add(TimeSpan.FromMinutes(ev.dur));
+                if (currentSlot < evEnd && proposedEnd > ev.start)
+                {
+                    overlap = true;
+                    break;
+                }
+            }
+
+            if (!overlap)
+            {
+                comboBoxTime.Items.Add(currentSlot.ToString(@"hh\:mm"));
+            }
+
+            currentSlot = currentSlot.Add(TimeSpan.FromMinutes(30));
+        }
+
+        if (comboBoxTime.Items.Count > 0)
+        {
+            if (comboBoxTime.Items.Contains(previousSelection))
+                comboBoxTime.SelectedItem = previousSelection;
+            else
+                comboBoxTime.SelectedIndex = 0;
+            comboBoxTime.Enabled = true;
+        }
+        else
+        {
+            comboBoxTime.Items.Add("No slots");
+            comboBoxTime.SelectedIndex = 0;
+            comboBoxTime.Enabled = false;
+        }
+    }
+
     private void loadCategories()
     {
         comboBoxCategory.Items.AddRange(new string[]
@@ -31,7 +123,7 @@ public partial class EditEvent : Form
         using (MySqlConnection connection = GlobalManager.GetConnection())
         {
             connection.Open();
-            string query = "SELECT venueId, name FROM venues ORDER BY name ASC";
+            string query = "SELECT venueId, name, capacity FROM venues ORDER BY name ASC";
 
             using (MySqlCommand command = new MySqlCommand(query, connection))
             using (MySqlDataReader reader = command.ExecuteReader())
@@ -42,7 +134,8 @@ public partial class EditEvent : Form
                     venues.Add(new Venue
                     {
                         venueId = Convert.ToInt32(reader["venueId"]),
-                        name    = reader["name"].ToString()!
+                        name    = reader["name"].ToString(),
+                        capacity = Convert.ToInt32(reader["capacity"])
                     });
                 }
                 comboBoxVenue.DisplayMember = "name";
@@ -56,7 +149,7 @@ public partial class EditEvent : Form
     {
         using (MySqlConnection connection = GlobalManager.GetConnection()){
             connection.Open();
-            string Query = @"SELECT title, category, eventDate, eventTime, totalTickets, price, 
+            string Query = @"SELECT title, category, eventDate, eventTime, durationMinutes, totalTickets, price, 
                             VenueId FROM events WHERE eventId = @eventId";
             using (MySqlCommand command = new MySqlCommand(Query, connection))
             {   
@@ -68,11 +161,18 @@ public partial class EditEvent : Form
                         textBoxTitle.Text = reader["title"].ToString();
                         textBoxTickets.Text = reader["totalTickets"].ToString();
                         textBoxPrice.Text = reader["price"].ToString();
-                        dateTimePicker2.Value = Convert.ToDateTime(reader["eventDate"]);
-                        dateTimePicker1.Value = DateTime.Today.Add(TimeSpan.Parse(reader["eventTime"].ToString()));
+                        
                         comboBoxCategory.SelectedItem = reader["category"].ToString();
+                        comboBoxDuration.SelectedItem = Convert.ToInt32(reader["durationMinutes"]);
+                        dateTimePicker2.Value = Convert.ToDateTime(reader["eventDate"]);
                         comboBoxVenue.SelectedValue = Convert.ToInt32(reader["venueId"]);
 
+                        string loadedTime = TimeSpan.Parse(reader["eventTime"].ToString()).ToString(@"hh\:mm");
+                        if (!comboBoxTime.Items.Contains(loadedTime))
+                        {
+                            comboBoxTime.Items.Add(loadedTime);
+                        }
+                        comboBoxTime.SelectedItem = loadedTime;
                     }
                 }
             }
@@ -110,15 +210,34 @@ public partial class EditEvent : Form
         MessageBox.Show("Price must be a valid positive number."); return;
     }
 
+    int venueId = (int)comboBoxVenue.SelectedValue!;
+    int capacity = ((Venue)comboBoxVenue.SelectedItem).capacity;
+
+    if (totalTickets > capacity)
+    {
+        MessageBox.Show($"Tickets cannot exceed the venue's capacity of {capacity}.");
+        return;
+    }
+
+    if (comboBoxTime.SelectedItem == null || !comboBoxTime.Enabled || comboBoxTime.SelectedItem.ToString() == "No slots")
+    {
+        MessageBox.Show("Please select an available time slot.");
+        return;
+    }
+
+    string time = comboBoxTime.SelectedItem.ToString() + ":00";
+    int duration = (int)comboBoxDuration.SelectedItem;
+
     try
     {
         using (MySqlConnection connection = GlobalManager.GetConnection())
         {
             connection.Open();
+
             string query = @"
                 UPDATE events 
                 SET title = @title, category = @category, totalTickets = @tickets,price = @price, 
-                    venueId = @venueId,eventDate = @date,eventTime = @time, status = 'Pending'
+                    venueId = @venueId,eventDate = @date,eventTime = @time, durationMinutes = @durationMinutes, status = 'Pending'
                 WHERE eventId = @eventId AND organiserId = @organiserId";
             
             using (MySqlCommand command = new MySqlCommand(query, connection))
@@ -130,7 +249,8 @@ public partial class EditEvent : Form
                 command.Parameters.AddWithValue("@price", ticketPrice);
                 command.Parameters.AddWithValue("@venueId", (int)comboBoxVenue.SelectedValue);
                 command.Parameters.AddWithValue("@date", dateTimePicker2.Value.ToString("yyyy-MM-dd"));
-                command.Parameters.AddWithValue("@time", dateTimePicker1.Value.ToString("HH:mm:ss"));
+                command.Parameters.AddWithValue("@time", time);
+                command.Parameters.AddWithValue("@durationMinutes", duration);
                 command.Parameters.AddWithValue("@organiserId", GlobalManager.UserId);
 
                 int result = command.ExecuteNonQuery();

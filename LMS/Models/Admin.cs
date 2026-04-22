@@ -66,7 +66,7 @@ public class Admin : User
         using (MySqlConnection connection = GlobalManager.GetConnection())
         {
             connection.Open();
-            string query = @"SELECT e.eventId, e.organiserId, e.title, e.category, e.eventDate, e.eventTime, e.totalTickets,
+            string query = @"SELECT e.eventId, e.organiserId, e.title, e.category, e.eventDate, e.eventTime, e.durationMinutes, e.totalTickets,
 		                        e.price, e.status, v.name as venueName, u.fullname as organiserName
                                 from events e
                                 Join Venues v on e.venueId = v.venueId
@@ -87,6 +87,7 @@ public class Admin : User
                             category     = reader["category"].ToString(),
                             eventDate    = Convert.ToDateTime(reader["eventDate"]),
                             eventTime    = TimeSpan.Parse(reader["eventTime"].ToString()),
+                            durationMinutes = Convert.ToInt32(reader["durationMinutes"]),
                             totalTickets = Convert.ToInt32(reader["totalTickets"]),
                             price        = Convert.ToDecimal(reader["price"]),
                             status       = reader["status"].ToString(),

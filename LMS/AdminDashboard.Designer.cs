@@ -52,8 +52,8 @@ partial class AdminDashboard
         label1 = new System.Windows.Forms.Label();
         button5 = new System.Windows.Forms.Button();
         tabPage4 = new System.Windows.Forms.TabPage();
-        dataGridView3 = new System.Windows.Forms.DataGridView();
         labelDiscountTitle = new System.Windows.Forms.Label();
+        dataGridView3 = new System.Windows.Forms.DataGridView();
         labelDiscountCode = new System.Windows.Forms.Label();
         textBoxDiscountCode = new System.Windows.Forms.TextBox();
         labelPercentage = new System.Windows.Forms.Label();
@@ -61,6 +61,8 @@ partial class AdminDashboard
         buttonCreateDiscount = new System.Windows.Forms.Button();
         buttonToggleDiscount = new System.Windows.Forms.Button();
         button8 = new System.Windows.Forms.Button();
+        tabPage5 = new System.Windows.Forms.TabPage();
+        lblAnalytics = new System.Windows.Forms.Label();
         TabControl1.SuspendLayout();
         tabPage1.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
@@ -70,6 +72,7 @@ partial class AdminDashboard
         tabPage4.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
         ((System.ComponentModel.ISupportInitialize)numericPercentage).BeginInit();
+        tabPage5.SuspendLayout();
         SuspendLayout();
         // 
         // button2
@@ -88,6 +91,7 @@ partial class AdminDashboard
         TabControl1.Controls.Add(tabPage2);
         TabControl1.Controls.Add(tabPage3);
         TabControl1.Controls.Add(tabPage4);
+        TabControl1.Controls.Add(tabPage5);
         TabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
         TabControl1.Location = new System.Drawing.Point(0, 0);
         TabControl1.Name = "TabControl1";
@@ -283,7 +287,7 @@ partial class AdminDashboard
         button5.UseVisualStyleBackColor = true;
         button5.Click += button5_Click;
         // 
-        // tabPage4 — Discount Codes
+        // tabPage4
         // 
         tabPage4.Controls.Add(labelDiscountTitle);
         tabPage4.Controls.Add(dataGridView3);
@@ -354,7 +358,6 @@ partial class AdminDashboard
         // 
         numericPercentage.Location = new System.Drawing.Point(610, 397);
         numericPercentage.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-        numericPercentage.Maximum = new decimal(new int[] { 100, 0, 0, 0 });
         numericPercentage.Name = "numericPercentage";
         numericPercentage.Size = new System.Drawing.Size(80, 35);
         numericPercentage.TabIndex = 4;
@@ -380,7 +383,7 @@ partial class AdminDashboard
         buttonToggleDiscount.UseVisualStyleBackColor = true;
         buttonToggleDiscount.Click += buttonToggleDiscount_Click;
         // 
-        // button8 — Logout on Discounts tab
+        // button8
         // 
         button8.Location = new System.Drawing.Point(400, 547);
         button8.Name = "button8";
@@ -389,6 +392,26 @@ partial class AdminDashboard
         button8.Text = "Log out";
         button8.UseVisualStyleBackColor = true;
         button8.Click += button8_Click;
+        // 
+        // tabPage5
+        // 
+        tabPage5.Controls.Add(lblAnalytics);
+        tabPage5.Location = new System.Drawing.Point(4, 39);
+        tabPage5.Name = "tabPage5";
+        tabPage5.Padding = new System.Windows.Forms.Padding(3);
+        tabPage5.Size = new System.Drawing.Size(902, 627);
+        tabPage5.TabIndex = 4;
+        tabPage5.Text = "Analytics";
+        tabPage5.UseVisualStyleBackColor = true;
+        // 
+        // lblAnalytics
+        // 
+        lblAnalytics.AutoSize = true;
+        lblAnalytics.Location = new System.Drawing.Point(107, 50);
+        lblAnalytics.Name = "lblAnalytics";
+        lblAnalytics.Size = new System.Drawing.Size(68, 30);
+        lblAnalytics.TabIndex = 0;
+        lblAnalytics.Text = "label5";
         // 
         // AdminDashboard
         // 
@@ -408,8 +431,14 @@ partial class AdminDashboard
         tabPage4.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)dataGridView3).EndInit();
         ((System.ComponentModel.ISupportInitialize)numericPercentage).EndInit();
+        tabPage5.ResumeLayout(false);
+        tabPage5.PerformLayout();
         ResumeLayout(false);
     }
+
+    private System.Windows.Forms.Label lblAnalytics;
+
+    private System.Windows.Forms.TabPage tabPage5;
 
     private System.Windows.Forms.DataGridView dataGridView1;
 
