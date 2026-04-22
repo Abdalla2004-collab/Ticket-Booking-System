@@ -264,7 +264,7 @@ partial class Resgistration
         this.AcceptButton = this.button1;
         this.CancelButton = this.button2;
         Text = "Create New Account";
-        Load += Resgistration_Load;
+
         panelMain.ResumeLayout(false);
         tableLayoutPanelMain.ResumeLayout(false);
         tableLayoutPanelMain.PerformLayout();

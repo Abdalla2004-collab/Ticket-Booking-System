@@ -11,10 +11,7 @@ public partial class Resgistration : Form
         ThemeManager.ApplyLargeTheme(this);
     }
 
-    private void Resgistration_Load(object sender, EventArgs e)
-    {
-        
-    }
+
     private bool EmailExists(string email)
     {
         using (MySqlConnection connection = (GlobalManager.GetConnection()))

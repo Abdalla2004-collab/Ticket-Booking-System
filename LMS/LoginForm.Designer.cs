@@ -83,7 +83,7 @@ partial class LoginForm
         label1.TabIndex = 3;
         label1.Text = "Password";
         label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-        label1.Click += label1_Click;
+
         // 
         // label2
         // 
@@ -95,13 +95,13 @@ partial class LoginForm
         label2.TabIndex = 4;
         label2.Text = "Email";
         label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-        label2.Click += label2_Click;
+
         // 
         textBox1.Name = "textBox1";
         textBox1.PlaceholderText = "Enter your email";
         textBox1.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
         textBox1.TabIndex = 5;
-        textBox1.TextChanged += textBox1_TextChanged;
+
         // 
         // label3
         // 
@@ -113,7 +113,7 @@ partial class LoginForm
         label3.TabIndex = 6;
         label3.Text = "Login";
         label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-        label3.Click += label3_Click_1;
+
         // 
         panelMain.Controls.Add(tableLayoutPanelMain);
         panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -187,7 +187,7 @@ partial class LoginForm
         Controls.Add(panelMain);
         Controls.Add(panelButtons);
         Controls.Add(label3);
-        Load += LoginForm_Load;
+
         panelMain.ResumeLayout(false);
         tableLayoutPanelMain.ResumeLayout(false);
         tableLayoutPanelMain.PerformLayout();

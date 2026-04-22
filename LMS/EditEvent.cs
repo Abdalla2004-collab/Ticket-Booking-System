@@ -11,7 +11,7 @@ public partial class EditEvent : Form
         _eventId = eventId;
         this.Load += EditEvent_Load;
     }
-    private bool isLoading = true;
+
 
     private void EditEvent_Load(object sender, EventArgs e)
     {
@@ -27,7 +27,7 @@ public partial class EditEvent : Form
 
 
         loadEventDetails();
-        isLoading = false;
+
     }
 
     private void refreshAvailableTimes(object? sender, EventArgs e)
@@ -180,9 +180,7 @@ public partial class EditEvent : Form
     }
 
 
-    private void label1_Click(object sender, EventArgs e)
-    {
-    }
+
 
     private void button2_Click(object sender, EventArgs e)
     {

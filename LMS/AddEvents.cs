@@ -155,22 +155,7 @@ public partial class AddEvents : Form
         comboBoxCategory.DropDownStyle = ComboBoxStyle.DropDownList;
     }
 
-    private void buttonAdd_Click(object sender, EventArgs e)
-    {
-        
-    }
 
-    
-
-    private void textBox1_TextChanged(object sender, EventArgs e)
-    {
-        
-    }
-
-    private void label1_Click(object sender, EventArgs e)
-    {
-        
-    }
 
     private void button2_Click(object sender, EventArgs e)
     {
@@ -266,20 +251,7 @@ public partial class AddEvents : Form
         }
     }
 
-    private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
-    {
-        
-    }
 
-    private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
-    {
-        
-    }
-
-    private void label5_Click(object sender, EventArgs e)
-    {
-        
-    }
 
     private void buttonBack_Click_1(object sender, EventArgs e)
     {
