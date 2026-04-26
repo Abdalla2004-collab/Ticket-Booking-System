@@ -33,16 +33,26 @@ partial class MyBookings
     {
         button1 = new System.Windows.Forms.Button();
         button2 = new System.Windows.Forms.Button();
-        dataGridView1 = new System.Windows.Forms.DataGridView();
         labelTitle = new System.Windows.Forms.Label();
         panelBottom = new System.Windows.Forms.Panel();
         tableLayoutPanelButtons = new System.Windows.Forms.TableLayoutPanel();
         flowLayoutPanelButtons = new System.Windows.Forms.FlowLayoutPanel();
         panelGridContainer = new System.Windows.Forms.Panel();
-        ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+        tabControlBookings = new System.Windows.Forms.TabControl();
+        tabPageActive = new System.Windows.Forms.TabPage();
+        dataGridViewActive = new System.Windows.Forms.DataGridView();
+        tabPageHistory = new System.Windows.Forms.TabPage();
+        dataGridViewHistory = new System.Windows.Forms.DataGridView();
+        
+        ((System.ComponentModel.ISupportInitialize)dataGridViewActive).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)dataGridViewHistory).BeginInit();
         panelBottom.SuspendLayout();
         tableLayoutPanelButtons.SuspendLayout();
         flowLayoutPanelButtons.SuspendLayout();
+        panelGridContainer.SuspendLayout();
+        tabControlBookings.SuspendLayout();
+        tabPageActive.SuspendLayout();
+        tabPageHistory.SuspendLayout();
         SuspendLayout();
         // 
         // labelTitle
@@ -58,7 +68,7 @@ partial class MyBookings
         // 
         // panelGridContainer
         // 
-        panelGridContainer.Controls.Add(dataGridView1);
+        panelGridContainer.Controls.Add(tabControlBookings);
         panelGridContainer.Dock = System.Windows.Forms.DockStyle.Fill;
         panelGridContainer.Location = new System.Drawing.Point(0, 100);
         panelGridContainer.Name = "panelGridContainer";
@@ -66,17 +76,63 @@ partial class MyBookings
         panelGridContainer.Size = new System.Drawing.Size(1031, 630);
         panelGridContainer.TabIndex = 22;
         // 
-        // dataGridView1
+        // tabControlBookings
         // 
-        dataGridView1.AllowUserToAddRows = false;
-        dataGridView1.AllowUserToDeleteRows = false;
-        dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-        dataGridView1.Location = new System.Drawing.Point(20, 20);
-        dataGridView1.Name = "dataGridView1";
-        dataGridView1.ReadOnly = true;
-        dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-        dataGridView1.Size = new System.Drawing.Size(991, 590);
-        dataGridView1.TabIndex = 2;
+        tabControlBookings.Controls.Add(tabPageActive);
+        tabControlBookings.Controls.Add(tabPageHistory);
+        tabControlBookings.Dock = System.Windows.Forms.DockStyle.Fill;
+        tabControlBookings.Location = new System.Drawing.Point(20, 20);
+        tabControlBookings.Name = "tabControlBookings";
+        tabControlBookings.SelectedIndex = 0;
+        tabControlBookings.Size = new System.Drawing.Size(991, 590);
+        tabControlBookings.TabIndex = 0;
+        tabControlBookings.SelectedIndexChanged += tabControlBookings_SelectedIndexChanged;
+        // 
+        // tabPageActive
+        // 
+        tabPageActive.Controls.Add(dataGridViewActive);
+        tabPageActive.Location = new System.Drawing.Point(4, 25);
+        tabPageActive.Name = "tabPageActive";
+        tabPageActive.Padding = new System.Windows.Forms.Padding(3);
+        tabPageActive.Size = new System.Drawing.Size(983, 561);
+        tabPageActive.TabIndex = 0;
+        tabPageActive.Text = "Active Bookings";
+        tabPageActive.UseVisualStyleBackColor = true;
+        // 
+        // dataGridViewActive
+        // 
+        dataGridViewActive.AllowUserToAddRows = false;
+        dataGridViewActive.AllowUserToDeleteRows = false;
+        dataGridViewActive.Dock = System.Windows.Forms.DockStyle.Fill;
+        dataGridViewActive.Location = new System.Drawing.Point(3, 3);
+        dataGridViewActive.Name = "dataGridViewActive";
+        dataGridViewActive.ReadOnly = true;
+        dataGridViewActive.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+        dataGridViewActive.Size = new System.Drawing.Size(977, 555);
+        dataGridViewActive.TabIndex = 0;
+        // 
+        // tabPageHistory
+        // 
+        tabPageHistory.Controls.Add(dataGridViewHistory);
+        tabPageHistory.Location = new System.Drawing.Point(4, 25);
+        tabPageHistory.Name = "tabPageHistory";
+        tabPageHistory.Padding = new System.Windows.Forms.Padding(3);
+        tabPageHistory.Size = new System.Drawing.Size(983, 561);
+        tabPageHistory.TabIndex = 1;
+        tabPageHistory.Text = "Booking History";
+        tabPageHistory.UseVisualStyleBackColor = true;
+        // 
+        // dataGridViewHistory
+        // 
+        dataGridViewHistory.AllowUserToAddRows = false;
+        dataGridViewHistory.AllowUserToDeleteRows = false;
+        dataGridViewHistory.Dock = System.Windows.Forms.DockStyle.Fill;
+        dataGridViewHistory.Location = new System.Drawing.Point(3, 3);
+        dataGridViewHistory.Name = "dataGridViewHistory";
+        dataGridViewHistory.ReadOnly = true;
+        dataGridViewHistory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+        dataGridViewHistory.Size = new System.Drawing.Size(977, 555);
+        dataGridViewHistory.TabIndex = 0;
         // 
         // panelBottom
         // 
@@ -141,16 +197,20 @@ partial class MyBookings
         Controls.Add(panelBottom);
         Controls.Add(labelTitle);
         Text = "My Bookings";
-        ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+        ((System.ComponentModel.ISupportInitialize)dataGridViewActive).EndInit();
+        ((System.ComponentModel.ISupportInitialize)dataGridViewHistory).EndInit();
         panelBottom.ResumeLayout(false);
         tableLayoutPanelButtons.ResumeLayout(false);
         tableLayoutPanelButtons.PerformLayout();
         flowLayoutPanelButtons.ResumeLayout(false);
         flowLayoutPanelButtons.PerformLayout();
+        panelGridContainer.ResumeLayout(false);
+        tabControlBookings.ResumeLayout(false);
+        tabPageActive.ResumeLayout(false);
+        tabPageHistory.ResumeLayout(false);
         ResumeLayout(false);
     }
 
-    private System.Windows.Forms.DataGridView dataGridView1;
     private System.Windows.Forms.Button button1;
     private System.Windows.Forms.Button button2;
     private System.Windows.Forms.Label labelTitle;
@@ -158,6 +218,11 @@ partial class MyBookings
     private System.Windows.Forms.TableLayoutPanel tableLayoutPanelButtons;
     private System.Windows.Forms.Panel panelGridContainer;
     private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelButtons;
+    private System.Windows.Forms.TabControl tabControlBookings;
+    private System.Windows.Forms.TabPage tabPageActive;
+    private System.Windows.Forms.DataGridView dataGridViewActive;
+    private System.Windows.Forms.TabPage tabPageHistory;
+    private System.Windows.Forms.DataGridView dataGridViewHistory;
 
     #endregion
 }

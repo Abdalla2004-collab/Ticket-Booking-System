@@ -39,6 +39,7 @@ partial class CustomerDashboard
         button2 = new System.Windows.Forms.Button();
         button3 = new System.Windows.Forms.Button();
         button4 = new System.Windows.Forms.Button();
+        buttonEditProfile = new System.Windows.Forms.Button();
         dataGridView1 = new System.Windows.Forms.DataGridView();
         panelNotifications = new System.Windows.Forms.Panel();
         panelGridContainer = new System.Windows.Forms.Panel();
@@ -136,6 +137,16 @@ partial class CustomerDashboard
         button4.Text = "Logout";
         button4.Click += button4_Click_1;
         // 
+        // buttonEditProfile
+        // 
+        buttonEditProfile.AutoSize = true;
+        buttonEditProfile.Location = new System.Drawing.Point(431, 3);
+        buttonEditProfile.Name = "buttonEditProfile";
+        buttonEditProfile.Size = new System.Drawing.Size(110, 46);
+        buttonEditProfile.TabIndex = 8;
+        buttonEditProfile.Text = "Edit Profile";
+        buttonEditProfile.Click += buttonEditProfile_Click;
+        // 
         // panelGridContainer
         // 
         panelGridContainer.Controls.Add(dataGridView1);
@@ -190,7 +201,7 @@ partial class CustomerDashboard
         buttonDismissNotifications.Dock = System.Windows.Forms.DockStyle.Right;
         buttonDismissNotifications.Location = new System.Drawing.Point(1067, 10);
         buttonDismissNotifications.Name = "buttonDismissNotifications";
-        buttonDismissNotifications.Size = new System.Drawing.Size(100, 78);
+        buttonDismissNotifications.Size = new System.Drawing.Size(130, 78);
         buttonDismissNotifications.TabIndex = 1;
         buttonDismissNotifications.Text = "Dismiss";
         buttonDismissNotifications.Click += buttonDismissNotifications_Click;
@@ -223,12 +234,13 @@ partial class CustomerDashboard
         // 
         flowLayoutPanelButtons.Anchor = System.Windows.Forms.AnchorStyles.None;
         flowLayoutPanelButtons.AutoSize = true;
+        flowLayoutPanelButtons.Controls.Add(buttonEditProfile);
         flowLayoutPanelButtons.Controls.Add(button2);
         flowLayoutPanelButtons.Controls.Add(button3);
         flowLayoutPanelButtons.Controls.Add(button4);
-        flowLayoutPanelButtons.Location = new System.Drawing.Point(374, 34);
+        flowLayoutPanelButtons.Location = new System.Drawing.Point(324, 34);
         flowLayoutPanelButtons.Name = "flowLayoutPanelButtons";
-        flowLayoutPanelButtons.Size = new System.Drawing.Size(428, 52);
+        flowLayoutPanelButtons.Size = new System.Drawing.Size(538, 52);
         flowLayoutPanelButtons.TabIndex = 0;
         flowLayoutPanelButtons.WrapContents = false;
         // 
@@ -301,6 +313,7 @@ partial class CustomerDashboard
     private System.Windows.Forms.Button button2;
     private System.Windows.Forms.Button button3;
     private System.Windows.Forms.Button button4;
+    private System.Windows.Forms.Button buttonEditProfile;
     private System.Windows.Forms.Panel panelGridContainer;
     private System.Windows.Forms.ComboBox comboBox1;
     private System.Windows.Forms.Label label2;

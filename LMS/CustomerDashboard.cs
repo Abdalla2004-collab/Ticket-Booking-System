@@ -141,6 +141,15 @@ public partial class CustomerDashboard : Form
         loadNotifications();
     }
 
+    private void buttonEditProfile_Click(object sender, EventArgs e)
+    {
+        EditProfileForm editProfileForm = new EditProfileForm();
+        if (editProfileForm.ShowDialog() == DialogResult.OK)
+        {
+            loadEvents(); // Refresh in case profile info affects anything
+        }
+    }
+
     private void button4_Click_1(object sender, EventArgs e)
     {
         GlobalManager.clearCurrentUser();

@@ -71,6 +71,16 @@ public partial class OrganiserDashboard : Form
         panelNotifications.Visible = false;
     }
 
+    private void buttonEditProfile_Click(object sender, EventArgs e)
+    {
+        EditProfileForm editProfileForm = new EditProfileForm();
+        if (editProfileForm.ShowDialog() == DialogResult.OK)
+        {
+            loadMyevents(); // Refresh in case profile info affects anything
+            labelWelcome.Text = $"Welcome, {GlobalManager.UserName}!";
+        }
+    }
+
     private void button3_Click(object sender, EventArgs e)
     {
         GlobalManager.clearCurrentUser();

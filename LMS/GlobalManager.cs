@@ -89,6 +89,7 @@ public static class GlobalManager
         }
         return notifications;
     }
+
     
     public static void sendNotification(int userId, string message)
     {
@@ -109,8 +110,74 @@ public static class GlobalManager
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Failed to send notification: {ex.Message}");
+            MessageBox.Show($"Failed to send notification: {ex.Message}");
         }
     }
-    
+
+    public static bool UpdateUserProfile(string name, string email, string password = "")
+    {
+        try
+        {
+            using (MySqlConnection connection = GetConnection())
+            {
+                connection.Open();
+                string query;
+                if (!string.IsNullOrEmpty(password))
+                {
+                    query = "UPDATE users SET fullname = @name, email = @email, password = @password WHERE id = @userId";
+                }
+                else
+                {
+                    query = "UPDATE users SET fullname = @name, email = @email WHERE id = @userId";
+                }
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@name", name);
+                    command.Parameters.AddWithValue("@email", email);
+                    command.Parameters.AddWithValue("@userId", UserId);
+                    if (!string.IsNullOrEmpty(password))
+                    {
+                        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+                        command.Parameters.AddWithValue("@password", hashedPassword);
+                    }
+
+                    int result = command.ExecuteNonQuery();
+                    if (result > 0)
+                    {
+                        ReloadCurrentUser();
+                        return true;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Failed to update profile: {ex.Message}");
+        }
+        return false;
+    }
+
+    public static void ReloadCurrentUser()
+    {
+        if (CurrentUser == null) return;
+
+        using (MySqlConnection connection = GetConnection())
+        {
+            connection.Open();
+            string query = "SELECT fullname, email, role FROM users WHERE id = @userId";
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@userId", CurrentUser.id);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        CurrentUser.fullname = reader["fullname"].ToString();
+                        CurrentUser.email = reader["email"].ToString();
+                    }
+                }
+            }
+        }
+    }
 }

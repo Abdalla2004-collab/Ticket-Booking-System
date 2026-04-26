@@ -23,23 +23,43 @@ public partial class MyBookings : Form
     private void loadBookings()
     {
         var customer = (Customer)GlobalManager.CurrentUser;
-        var bookings = customer.getMyBookings();
-        
-        dataGridView1.DataSource = bookings;
-        
-        dataGridView1.Columns["bookingId"].Visible = false;
-        dataGridView1.Columns["customerId"].Visible = false;
-        dataGridView1.Columns["eventId"].Visible = false;
+        var allBookings = customer.getMyBookings();
 
-        dataGridView1.Columns["eventTitle"].HeaderText = "Event";
-        dataGridView1.Columns["venueName"].HeaderText = "Venue";
-        dataGridView1.Columns["venueAddress"].HeaderText = "Address";
-        dataGridView1.Columns["eventDate"].HeaderText = "Date";
-        dataGridView1.Columns["eventTime"].HeaderText = "Time";
-        dataGridView1.Columns["quantity"].HeaderText = "Tickets";
-        dataGridView1.Columns["totalPrice"].HeaderText = "Total Paid (£)";
-        dataGridView1.Columns["bookingDate"].HeaderText = "Booked On";
-        dataGridView1.Columns["status"].HeaderText = "Status";
+        var activeBookings = allBookings.Where(b => b.status == "Confirmed" && b.eventDate >= DateTime.Today).ToList();
+        var historyBookings = allBookings.Where(b => b.status == "Cancelled" || b.eventDate < DateTime.Today).ToList();
+        
+        dataGridViewActive.DataSource = activeBookings;
+        dataGridViewHistory.DataSource = historyBookings;
+
+        SetupGrid(dataGridViewActive);
+        SetupGrid(dataGridViewHistory);
+        
+        // Disable cancel button if history tab is selected
+        button2.Enabled = tabControlBookings.SelectedTab == tabPageActive;
+    }
+
+    private void SetupGrid(DataGridView dgv)
+    {
+        if (dgv.Columns.Count == 0) return;
+        
+        dgv.Columns["bookingId"].Visible = false;
+        dgv.Columns["customerId"].Visible = false;
+        dgv.Columns["eventId"].Visible = false;
+
+        dgv.Columns["eventTitle"].HeaderText = "Event";
+        dgv.Columns["venueName"].HeaderText = "Venue";
+        dgv.Columns["venueAddress"].HeaderText = "Address";
+        dgv.Columns["eventDate"].HeaderText = "Date";
+        dgv.Columns["eventTime"].HeaderText = "Time";
+        dgv.Columns["quantity"].HeaderText = "Tickets";
+        dgv.Columns["totalPrice"].HeaderText = "Total Paid (£)";
+        dgv.Columns["bookingDate"].HeaderText = "Booked On";
+        dgv.Columns["status"].HeaderText = "Status";
+    }
+
+    private void tabControlBookings_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        button2.Enabled = tabControlBookings.SelectedTab == tabPageActive;
     }
 
     private void button1_Click(object sender, EventArgs e)
@@ -49,15 +69,17 @@ public partial class MyBookings : Form
 
     private void button2_Click(object sender, EventArgs e)
     {
-        if (dataGridView1.SelectedRows.Count == 0)
+        DataGridView targetGrid = dataGridViewActive;
+        
+        if (targetGrid.SelectedRows.Count == 0)
         {
             MessageBox.Show("Please select a booking to cancel.");
             return;
         }
 
-        string currentStatus = dataGridView1.SelectedRows[0].Cells["status"].Value.ToString();
-        DateTime eventDate = Convert.ToDateTime(dataGridView1.SelectedRows[0].Cells["eventDate"].Value);
-        int bookingId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["bookingId"].Value);
+        string currentStatus = targetGrid.SelectedRows[0].Cells["status"].Value.ToString();
+        DateTime eventDate = Convert.ToDateTime(targetGrid.SelectedRows[0].Cells["eventDate"].Value);
+        int bookingId = Convert.ToInt32(targetGrid.SelectedRows[0].Cells["bookingId"].Value);
         
         if (currentStatus == "Cancelled")
         {
@@ -82,7 +104,7 @@ public partial class MyBookings : Form
 
         if (result)
         {
-            string eventTitle = dataGridView1.SelectedRows[0].Cells["eventTitle"].Value.ToString();
+            string eventTitle = targetGrid.SelectedRows[0].Cells["eventTitle"].Value.ToString();
             
             GlobalManager.sendNotification(GlobalManager.UserId, 
                 $"Your booking for '{eventTitle}' has been cancelled.");
@@ -96,4 +118,4 @@ public partial class MyBookings : Form
             MessageBox.Show("Failed to cancel booking. Please try again.");
         }
     }
-}
+}

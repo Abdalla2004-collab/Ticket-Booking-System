@@ -1,8 +1,7 @@
 using LMS.Models;
 namespace LMS;
 using MySql.Data.MySqlClient;
-
-
+using BCrypt.Net;
 public partial class AdminDashboard : Form
 {
     public AdminDashboard()
@@ -108,6 +107,16 @@ public partial class AdminDashboard : Form
         this.Hide();
     }
     
+    private void buttonEditProfile_Click(object sender, EventArgs e)
+    {
+        EditProfileForm editProfileForm = new EditProfileForm();
+        if (editProfileForm.ShowDialog() == DialogResult.OK)
+        {
+            loadAllUsers();
+            getEvents();
+        }
+    }
+    
 
 
 
@@ -127,6 +136,12 @@ public partial class AdminDashboard : Form
             MessageBox.Show("Capacity must be a positive whole number.");
             return;
         }
+
+        if (MessageBox.Show("Are you sure you want to add this new venue?", "Confirm Venue Addition", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+        {
+            return;
+        }
+
         try
         {
             using (MySqlConnection connection = GlobalManager.GetConnection())
@@ -232,6 +247,11 @@ public partial class AdminDashboard : Form
             MessageBox.Show("Please select a user first");
             return;
         }
+
+        if (MessageBox.Show("Are you sure you want to delete this user? This action cannot be undone.", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+        {
+            return;
+        }
         
         var admin = (Admin)GlobalManager.CurrentUser;
         int userId = Convert.ToInt32(dataGridView2.SelectedRows[0].Cells["userId"].Value);
@@ -322,5 +342,54 @@ public partial class AdminDashboard : Form
         admin.toggleDiscount(discountId);
         loadDiscounts();
     }
-    
+
+    private void buttonAddAdmin_Click(object sender, EventArgs e)
+    {
+        string name = textBoxAdminName.Text.Trim();
+        string email = textBoxAdminEmail.Text.Trim();
+        string password = textBoxAdminPassword.Text.Trim();
+        string confirmPassword = textBoxAdminConfirmPassword.Text.Trim();
+
+        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(confirmPassword))
+        {
+            MessageBox.Show("Please fill all fields.");
+            return;
+        }
+
+        if (!email.Contains("@") || !email.Contains("."))
+        {
+            MessageBox.Show("Invalid email.");
+            return;
+        }
+
+        if (password.Length < 8)
+        {
+            MessageBox.Show("Password must be at least 8 characters long.");
+            return;
+        }
+
+        if (password != confirmPassword)
+        {
+            MessageBox.Show("Passwords do not match.");
+            return;
+        }
+
+        if (MessageBox.Show("Are you sure you want to add a new admin?", "Confirm Admin Creation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+        {
+            return;
+        }
+
+        var admin = (Admin)GlobalManager.CurrentUser;
+        var result = admin.createAdmin(name, email, password);
+
+        MessageBox.Show(result.message);
+
+        if (result.success)
+        {
+            textBoxAdminName.Text = "";
+            textBoxAdminEmail.Text = "";
+            textBoxAdminPassword.Text = "";
+            textBoxAdminConfirmPassword.Text = "";
+        }
+    }
 }

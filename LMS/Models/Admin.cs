@@ -22,8 +22,8 @@ public class Admin : User
         {
             connection.Open();
 
-            string query = @"SELECT id, fullname, email, role FROM users WHERE role != 'Admin'
-                            ORDER BY role ASC, fullname ASC";
+            string query = @"SELECT id, fullname, email, role FROM users WHERE role != 'Admin' AND isActive = 1 
+                             ORDER BY role ASC, fullname ASC";
 
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
@@ -50,7 +50,7 @@ public class Admin : User
         using (MySqlConnection connection = GlobalManager.GetConnection())
         {
             connection.Open();
-            string query = @"DELETE FROM users  WHERE id = @userId and role != 'Admin'";
+            string query = @"UPDATE users SET isActive = 0 WHERE id = @userId AND role != 'Admin'";
 
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
@@ -197,5 +197,51 @@ public class Admin : User
             }
         }
     }
-    
+
+    public (bool success, string message) createAdmin(string fullname, string email, string password)
+    {
+        if (string.IsNullOrWhiteSpace(fullname) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+        {
+            return (false, "All fields are required.");
+        }
+
+        try
+        {
+            using (MySqlConnection connection = GlobalManager.GetConnection())
+            {
+                connection.Open();
+                
+                string checkQuery = "SELECT COUNT(*) FROM users WHERE email = @email";
+                using (MySqlCommand checkCmd = new MySqlCommand(checkQuery, connection))
+                {
+                    checkCmd.Parameters.AddWithValue("@email", email);
+                    int count = Convert.ToInt32(checkCmd.ExecuteScalar());
+                    if (count > 0)
+                    {
+                        return (false, "An account with this email already exists.");
+                    }
+                }
+
+                string insertQuery = "INSERT INTO users (fullname, email, password, role) VALUES (@fullname, @email, @password, 'Admin')";
+                using (MySqlCommand insertCmd = new MySqlCommand(insertQuery, connection))
+                {
+                    string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+                    insertCmd.Parameters.AddWithValue("@fullname", fullname);
+                    insertCmd.Parameters.AddWithValue("@email", email);
+                    insertCmd.Parameters.AddWithValue("@password", hashedPassword);
+                    
+                    int result = insertCmd.ExecuteNonQuery();
+                    if (result > 0)
+                    {
+                        return (true, "Admin account created successfully!");
+                    }
+                    return (false, "Failed to create admin account.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            return (false, "Database error: " + ex.Message);
+        }
+    }
 }

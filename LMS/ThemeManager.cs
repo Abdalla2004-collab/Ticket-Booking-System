@@ -132,6 +132,18 @@ namespace LMS
             {
                 ApplyControlTheme(child);
             }
+
+            if (control is DataGridView dgv2)
+            {
+                EnableDoubleBuffered(dgv2);
+            }
+        }
+
+        public static void EnableDoubleBuffered(DataGridView dgv)
+        {
+            var property = typeof(DataGridView).GetProperty("DoubleBuffered", 
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            property?.SetValue(dgv, true, null);
         }
     }
 }

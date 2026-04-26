@@ -30,7 +30,7 @@ public partial class LoginForm : Form
             {
                 connection.Open();
 
-                string query = "SELECT id, fullname, email, password, role FROM users WHERE email = @email";
+                string query = "SELECT id, fullname, email, password, role FROM users WHERE email = @email AND isActive = 1";
 
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {

@@ -110,7 +110,7 @@ public partial class AddEvents : Form
         using (MySqlConnection connection = GlobalManager.GetConnection())
         {
             connection.Open();
-            string query = "SELECT venueId, name, capacity FROM venues ORDER BY name ASC";
+            string query = "SELECT venueId, name, capacity FROM venues WHERE isAvailable = 1 ORDER BY name ASC";
 
             using (MySqlCommand command = new MySqlCommand(query, connection))
             using (MySqlDataReader reader = command.ExecuteReader())

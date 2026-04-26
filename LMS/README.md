@@ -9,6 +9,8 @@ Features
 - Secure login with session management
 - Add events with a unique date and time constraint
 - View events
+- Book and cancel events
+- Role based access
 
 Tech Stack
 
@@ -34,7 +36,5 @@ Requirements
 Under development
 
 - Improved UI design
-- View events segment
-- Role-based access
 - Payment method
 - Exploration of new features

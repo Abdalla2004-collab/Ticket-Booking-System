@@ -34,6 +34,7 @@ partial class OrganiserDashboard
         labelWelcome = new System.Windows.Forms.Label();
         button2 = new System.Windows.Forms.Button();
         button3 = new System.Windows.Forms.Button();
+        buttonEditProfile = new System.Windows.Forms.Button();
         buttonEditEvent = new System.Windows.Forms.Button();
         dataGridViewEvents = new System.Windows.Forms.DataGridView();
         btnCancelEvent = new System.Windows.Forms.Button();
@@ -92,7 +93,7 @@ partial class OrganiserDashboard
         buttonDismissNotifications.Dock = System.Windows.Forms.DockStyle.Right;
         buttonDismissNotifications.Location = new System.Drawing.Point(1192, 10);
         buttonDismissNotifications.Name = "buttonDismissNotifications";
-        buttonDismissNotifications.Size = new System.Drawing.Size(100, 78);
+        buttonDismissNotifications.Size = new System.Drawing.Size(130, 78);
         buttonDismissNotifications.TabIndex = 1;
         buttonDismissNotifications.Text = "Dismiss";
         buttonDismissNotifications.Click += buttonDismissNotifications_Click;
@@ -151,10 +152,11 @@ partial class OrganiserDashboard
         flowLayoutPanelButtons.Controls.Add(btnCancelEvent);
         flowLayoutPanelButtons.Controls.Add(button2);
         flowLayoutPanelButtons.Controls.Add(buttonEditEvent);
+        flowLayoutPanelButtons.Controls.Add(buttonEditProfile);
         flowLayoutPanelButtons.Controls.Add(button3);
-        flowLayoutPanelButtons.Location = new System.Drawing.Point(190, 72);
+        flowLayoutPanelButtons.Location = new System.Drawing.Point(112, 72);
         flowLayoutPanelButtons.Name = "flowLayoutPanelButtons";
-        flowLayoutPanelButtons.Size = new System.Drawing.Size(924, 56);
+        flowLayoutPanelButtons.Size = new System.Drawing.Size(1080, 56);
         flowLayoutPanelButtons.TabIndex = 0;
         flowLayoutPanelButtons.WrapContents = false;
         // 
@@ -203,6 +205,15 @@ partial class OrganiserDashboard
         button3.Text = "Logout";
         button3.Click += button3_Click;
         // 
+        // buttonEditProfile
+        // 
+        buttonEditProfile.Location = new System.Drawing.Point(873, 3);
+        buttonEditProfile.Name = "buttonEditProfile";
+        buttonEditProfile.Size = new System.Drawing.Size(150, 50);
+        buttonEditProfile.TabIndex = 10;
+        buttonEditProfile.Text = "Edit Profile";
+        buttonEditProfile.Click += buttonEditProfile_Click;
+        // 
         // OrganiserDashboard
         // 
         this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -227,6 +238,7 @@ partial class OrganiserDashboard
     private System.Windows.Forms.DataGridView dataGridViewEvents;
     private System.Windows.Forms.Button button2;
     private System.Windows.Forms.Button button3;
+    private System.Windows.Forms.Button buttonEditProfile;
     private System.Windows.Forms.Label labelWelcome;
     private System.Windows.Forms.Panel panelNotifications;
     private System.Windows.Forms.Label labelNotificationText;
