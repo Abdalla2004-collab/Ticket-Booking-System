@@ -12,20 +12,8 @@ public partial class Resgistration : Form
     }
 
 
-    private bool EmailExists(string email)
-    {
-        using (MySqlConnection connection = (GlobalManager.GetConnection()))
-        {
-            connection.Open();
-            string query = "SELECT COUNT(*) FROM users WHERE email = @email";
-            using (MySqlCommand command = new MySqlCommand(query, connection))
-            {
-                command.Parameters.AddWithValue("@email", email);
-                int count = Convert.ToInt32(command.ExecuteScalar());
-                return count > 0;
-            }
-        }
-    }
+
+    // Registers a new user and navigates to the login form
     private void button1_Click(object sender, EventArgs e)
     {
         
@@ -63,41 +51,24 @@ public partial class Resgistration : Form
             return;
         }
         
-        if (EmailExists(email))
+        if (GlobalManager.EmailExists(email))
         {
             MessageBox.Show("An account with this email already exists.");
             return;
         }
         try
         {
-            using (MySqlConnection connection = GlobalManager.GetConnection())
+            var regResult = GlobalManager.RegisterUser(name, email, password, role);
+            if (regResult.success)
             {
-                connection.Open();
-                
-                string query = "INSERT INTO users (fullname, email, password, role) VALUES (@name, @email, @password, @role)";
-
-                using (MySqlCommand command = new MySqlCommand(query, connection))
-                {
-                    string hashedPassword = BCrypt.HashPassword(password);
-                    command.Parameters.AddWithValue("@name", name);
-                    command.Parameters.AddWithValue("@email", email);
-                    command.Parameters.AddWithValue("@password", hashedPassword);
-                    command.Parameters.AddWithValue("@role", role);
-                    
-                    int result = command.ExecuteNonQuery();
-
-                    if (result > 0)
-                    {
-                        MessageBox.Show("Registration successful!");
-                        this.Hide();
-                        LoginForm loginForm = new LoginForm();
-                        loginForm.Show();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Registration failed. Please try again.");
-                    }
-                }
+                MessageBox.Show(regResult.message);
+                this.Hide();
+                LoginForm loginForm = new LoginForm();
+                loginForm.Show();
+            }
+            else
+            {
+                MessageBox.Show(regResult.message);
             }
         }
         catch (Exception ex)
@@ -106,6 +77,7 @@ public partial class Resgistration : Form
         }
     }
 
+    // Navigates back to the login form
     private void button2_Click(object sender, EventArgs e)
     {
         this.Hide();

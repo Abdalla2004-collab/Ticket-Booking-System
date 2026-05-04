@@ -2,6 +2,7 @@ using System.Diagnostics;
 using dotenv.net;
 using LMS.Models;
 using MySql.Data.MySqlClient;
+using BCrypt.Net;
 namespace LMS;
 
 public static class GlobalManager
@@ -179,5 +180,140 @@ public static class GlobalManager
                 }
             }
         }
+    }
+
+    public static (bool success, User? user, string message) AuthenticateUser(string email, string password)
+    {
+        try
+        {
+            using (MySqlConnection connection = GetConnection())
+            {
+                connection.Open();
+
+                string query = "SELECT id, fullname, email, password, role FROM users WHERE email = @email AND isActive = 1";
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@email", email);
+
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            string storedPassword = reader["password"].ToString();
+                            if (BCrypt.Net.BCrypt.Verify(password, storedPassword))
+                            {
+                                string fullname = reader["fullname"].ToString();
+                                string role = reader["role"].ToString();
+                                int id = Convert.ToInt32(reader["id"]);
+                            
+                                var user = CreateUser(id, fullname, email, role);
+                                return (true, user, "Welcome, " + fullname + "!");
+                            }
+                            return (false, null, "Invalid email or password.");
+                        }
+                        return (false, null, "Invalid email or password.");
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            return (false, null, "Error: " + ex.Message);
+        }
+    }
+
+    public static bool EmailExists(string email)
+    {
+        using (MySqlConnection connection = GetConnection())
+        {
+            connection.Open();
+            string query = "SELECT COUNT(*) FROM users WHERE email = @email";
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@email", email);
+                int count = Convert.ToInt32(command.ExecuteScalar());
+                return count > 0;
+            }
+        }
+    }
+
+    public static (bool success, string message) RegisterUser(string name, string email, string password, string role)
+    {
+        try
+        {
+            using (MySqlConnection connection = GetConnection())
+            {
+                connection.Open();
+                
+                string query = "INSERT INTO users (fullname, email, password, role) VALUES (@name, @email, @password, @role)";
+
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+                    command.Parameters.AddWithValue("@name", name);
+                    command.Parameters.AddWithValue("@email", email);
+                    command.Parameters.AddWithValue("@password", hashedPassword);
+                    command.Parameters.AddWithValue("@role", role);
+                    
+                    int result = command.ExecuteNonQuery();
+                    return result > 0 ? (true, "Registration successful!") : (false, "Registration failed. Please try again.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            return (false, "Error: " + ex.Message);
+        }
+    }
+
+    public static List<Venue> GetAvailableVenues()
+    {
+        var venues = new List<Venue>();
+        using (MySqlConnection connection = GetConnection())
+        {
+            connection.Open();
+            string query = "SELECT venueId, name, capacity FROM venues WHERE isAvailable = 1 ORDER BY name ASC";
+
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            using (MySqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    venues.Add(new Venue
+                    {
+                        venueId  = Convert.ToInt32(reader["venueId"]),
+                        name     = reader["name"].ToString()!,
+                        capacity = Convert.ToInt32(reader["capacity"])
+                    });
+                }
+            }
+        }
+        return venues;
+    }
+
+    public static List<Venue> GetAllVenues()
+    {
+        var venues = new List<Venue>();
+        using (MySqlConnection connection = GetConnection())
+        {
+            connection.Open();
+            string query = "SELECT venueId, name, capacity FROM venues ORDER BY name ASC";
+
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            using (MySqlDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    venues.Add(new Venue
+                    {
+                        venueId = Convert.ToInt32(reader["venueId"]),
+                        name    = reader["name"].ToString()!,
+                        capacity = Convert.ToInt32(reader["capacity"])
+                    });
+                }
+            }
+        }
+        return venues;
     }
 }

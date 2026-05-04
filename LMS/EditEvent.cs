@@ -13,8 +13,10 @@ public partial class EditEvent : Form
     }
 
 
+    // Initializes the Edit Event form and loads necessary data for the event
     private void EditEvent_Load(object sender, EventArgs e)
     {
+        dateTimePicker2.MinDate = DateTime.Today;
         loadVenues();
         loadCategories();
 
@@ -30,6 +32,7 @@ public partial class EditEvent : Form
 
     }
 
+    // Refreshes the available time slots based on venue, date, and duration selections
     private void refreshAvailableTimes(object? sender, EventArgs e)
     {
         if (comboBoxVenue.SelectedValue == null || comboBoxDuration.SelectedItem == null) return;
@@ -38,26 +41,8 @@ public partial class EditEvent : Form
         string dateStr = dateTimePicker2.Value.ToString("yyyy-MM-dd");
         int duration = (int)comboBoxDuration.SelectedItem;
 
-        var existingEvents = new List<(TimeSpan start, int dur)>();
-
-        using (var connection = GlobalManager.GetConnection())
-        {
-            connection.Open();
-            string query = "SELECT eventTime, durationMinutes FROM events WHERE venueId = @vId AND eventDate = @d AND eventId != @eId AND status != 'Rejected'";
-            using (var cmd = new MySql.Data.MySqlClient.MySqlCommand(query, connection))
-            {
-                cmd.Parameters.AddWithValue("@vId", venueId);
-                cmd.Parameters.AddWithValue("@d", dateStr);
-                cmd.Parameters.AddWithValue("@eId", _eventId);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        existingEvents.Add((TimeSpan.Parse(reader["eventTime"].ToString()!), Convert.ToInt32(reader["durationMinutes"])));
-                    }
-                }
-            }
-        }
+        var organiser = (Organiser)GlobalManager.CurrentUser!;
+        var existingEvents = organiser.getExistingEventsForVenue(venueId, dateStr, _eventId);
 
         string previousSelection = comboBoxTime.SelectedItem?.ToString() ?? "";
         comboBoxTime.Items.Clear();
@@ -72,6 +57,19 @@ public partial class EditEvent : Form
             {
                 currentSlot = currentSlot.Add(TimeSpan.FromMinutes(30));
                 continue;
+            }
+
+            // Ensure we cannot book a slot in the past (if today)
+            if (dateTimePicker2.Value.Date == DateTime.Today && currentSlot <= DateTime.Now.TimeOfDay)
+            {
+                currentSlot = currentSlot.Add(TimeSpan.FromMinutes(30));
+                continue;
+            }
+
+            // Ensure we cannot book a slot on a past date
+            if (dateTimePicker2.Value.Date < DateTime.Today)
+            {
+                break;
             }
 
             bool overlap = false;
@@ -109,6 +107,7 @@ public partial class EditEvent : Form
         }
     }
 
+    // Loads predefined categories into the combo box
     private void loadCategories()
     {
         comboBoxCategory.Items.AddRange(new string[]
@@ -118,160 +117,101 @@ public partial class EditEvent : Form
         comboBoxCategory.SelectedIndex = 0;
         comboBoxCategory.DropDownStyle = ComboBoxStyle.DropDownList;
     }
+    // Loads all venues into the combo box for selection
     private void loadVenues()
     {
-        using (MySqlConnection connection = GlobalManager.GetConnection())
-        {
-            connection.Open();
-            string query = "SELECT venueId, name, capacity FROM venues ORDER BY name ASC";
-
-            using (MySqlCommand command = new MySqlCommand(query, connection))
-            using (MySqlDataReader reader = command.ExecuteReader())
-            {
-                var venues = new List<Venue>();
-                while (reader.Read())
-                {
-                    venues.Add(new Venue
-                    {
-                        venueId = Convert.ToInt32(reader["venueId"]),
-                        name    = reader["name"].ToString(),
-                        capacity = Convert.ToInt32(reader["capacity"])
-                    });
-                }
-                comboBoxVenue.DisplayMember = "name";
-                comboBoxVenue.ValueMember = "venueId";
-                comboBoxVenue.DataSource = venues;
-            }
-        }
+        var venues = GlobalManager.GetAllVenues();
+        comboBoxVenue.DisplayMember = "name";
+        comboBoxVenue.ValueMember = "venueId";
+        comboBoxVenue.DataSource = venues;
     }
 
+    // Fetches the existing details of the event and populates the form fields
     private void loadEventDetails()
     {
-        using (MySqlConnection connection = GlobalManager.GetConnection()){
-            connection.Open();
-            string Query = @"SELECT title, category, eventDate, eventTime, durationMinutes, totalTickets, price, 
-                            VenueId FROM events WHERE eventId = @eventId";
-            using (MySqlCommand command = new MySqlCommand(Query, connection))
-            {   
-                command.Parameters.AddWithValue("@eventId", _eventId);
-                using (MySqlDataReader reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        textBoxTitle.Text = reader["title"].ToString();
-                        textBoxTickets.Text = reader["totalTickets"].ToString();
-                        textBoxPrice.Text = reader["price"].ToString();
-                        
-                        comboBoxCategory.SelectedItem = reader["category"].ToString();
-                        comboBoxDuration.SelectedItem = Convert.ToInt32(reader["durationMinutes"]);
-                        dateTimePicker2.Value = Convert.ToDateTime(reader["eventDate"]);
-                        comboBoxVenue.SelectedValue = Convert.ToInt32(reader["venueId"]);
+        var organiser = (Organiser)GlobalManager.CurrentUser!;
+        var eventObj = organiser.getEventDetails(_eventId);
+        
+        if (eventObj != null)
+        {
+            textBoxTitle.Text = eventObj.title;
+            textBoxTickets.Text = eventObj.totalTickets.ToString();
+            textBoxPrice.Text = eventObj.price.ToString();
+            
+            comboBoxCategory.SelectedItem = eventObj.category;
+            comboBoxDuration.SelectedItem = eventObj.durationMinutes;
+            dateTimePicker2.Value = eventObj.eventDate;
+            comboBoxVenue.SelectedValue = eventObj.venueId;
 
-                        string loadedTime = TimeSpan.Parse(reader["eventTime"].ToString()).ToString(@"hh\:mm");
-                        if (!comboBoxTime.Items.Contains(loadedTime))
-                        {
-                            comboBoxTime.Items.Add(loadedTime);
-                        }
-                        comboBoxTime.SelectedItem = loadedTime;
-                    }
-                }
+            string loadedTime = eventObj.eventTime.ToString(@"hh\:mm");
+            if (!comboBoxTime.Items.Contains(loadedTime))
+            {
+                comboBoxTime.Items.Add(loadedTime);
             }
+            comboBoxTime.SelectedItem = loadedTime;
         }
     }
 
 
 
 
+    // Closes the Edit Event form without saving changes
     private void button2_Click(object sender, EventArgs e)
     {
         this.Close();
     }
 
+    // Validates inputs and submits the updated event details
     private void button1_Click(object sender, EventArgs e)
-{
-    string title = textBoxTitle.Text.Trim();
-    string tickets = textBoxTickets.Text.Trim();
-    string price = textBoxPrice.Text.Trim();
-
-    if (title.Length == 0 || tickets.Length == 0 || price.Length == 0)
     {
-        MessageBox.Show("Please fill in all fields."); return;
-    }
+        string title = textBoxTitle.Text.Trim();
+        string tickets = textBoxTickets.Text.Trim();
+        string price = textBoxPrice.Text.Trim();
 
-    if (!int.TryParse(tickets, out int totalTickets) || totalTickets <= 0)
-    {
-        MessageBox.Show("Tickets must be a positive whole number."); return;
-    }
-
-    if (!decimal.TryParse(price, out decimal ticketPrice) || ticketPrice < 0)
-    {
-        MessageBox.Show("Price must be a valid positive number."); return;
-    }
-
-    int venueId = (int)comboBoxVenue.SelectedValue!;
-    int capacity = ((Venue)comboBoxVenue.SelectedItem).capacity;
-
-    if (totalTickets > capacity)
-    {
-        MessageBox.Show($"Tickets cannot exceed the venue's capacity of {capacity}.");
-        return;
-    }
-
-    if (comboBoxTime.SelectedItem == null || !comboBoxTime.Enabled || comboBoxTime.SelectedItem.ToString() == "No slots")
-    {
-        MessageBox.Show("Please select an available time slot.");
-        return;
-    }
-
-    string time = comboBoxTime.SelectedItem.ToString() + ":00";
-    int duration = (int)comboBoxDuration.SelectedItem;
-
-    try
-    {
-        using (MySqlConnection connection = GlobalManager.GetConnection())
+        if (title.Length == 0 || tickets.Length == 0 || price.Length == 0)
         {
-            connection.Open();
+            MessageBox.Show("Please fill in all fields."); return;
+        }
 
-            string query = @"
-                UPDATE events 
-                SET title = @title, category = @category, totalTickets = @tickets,price = @price, 
-                    venueId = @venueId,eventDate = @date,eventTime = @time, durationMinutes = @durationMinutes, status = 'Pending'
-                WHERE eventId = @eventId AND organiserId = @organiserId";
-            
-            using (MySqlCommand command = new MySqlCommand(query, connection))
-            {
-                command.Parameters.AddWithValue("@eventId", _eventId);
-                command.Parameters.AddWithValue("@title", title);
-                command.Parameters.AddWithValue("@category", comboBoxCategory.SelectedItem);
-                command.Parameters.AddWithValue("@tickets", totalTickets);
-                command.Parameters.AddWithValue("@price", ticketPrice);
-                command.Parameters.AddWithValue("@venueId", (int)comboBoxVenue.SelectedValue);
-                command.Parameters.AddWithValue("@date", dateTimePicker2.Value.ToString("yyyy-MM-dd"));
-                command.Parameters.AddWithValue("@time", time);
-                command.Parameters.AddWithValue("@durationMinutes", duration);
-                command.Parameters.AddWithValue("@organiserId", GlobalManager.UserId);
+        if (!int.TryParse(tickets, out int totalTickets) || totalTickets <= 0)
+        {
+            MessageBox.Show("Tickets must be a positive whole number."); return;
+        }
 
-                int result = command.ExecuteNonQuery();
+        if (!decimal.TryParse(price, out decimal ticketPrice) || ticketPrice < 0)
+        {
+            MessageBox.Show("Price must be a valid positive number."); return;
+        }
 
-                if (result > 0)
-                {
-                    MessageBox.Show("Event updated and resubmitted for admin approval.");
-                    this.Close();
-                }
-                else
-                {
-                    MessageBox.Show("Unable to update event. You may not have permission.");
-                }
-            }
+        int venueId = (int)comboBoxVenue.SelectedValue!;
+        int capacity = ((Venue)comboBoxVenue.SelectedItem).capacity;
+
+        if (totalTickets > capacity)
+        {
+            MessageBox.Show($"Tickets cannot exceed the venue's capacity of {capacity}.");
+            return;
+        }
+
+        if (comboBoxTime.SelectedItem == null || !comboBoxTime.Enabled || comboBoxTime.SelectedItem.ToString() == "No slots")
+        {
+            MessageBox.Show("Please select an available time slot.");
+            return;
+        }
+
+        string time = comboBoxTime.SelectedItem.ToString() + ":00";
+        int duration = (int)comboBoxDuration.SelectedItem;
+
+        var organiser = (Organiser)GlobalManager.CurrentUser!;
+        var result = organiser.updateEvent(
+            _eventId, title, comboBoxCategory.SelectedItem!.ToString()!, totalTickets, ticketPrice,
+            venueId, dateTimePicker2.Value.ToString("yyyy-MM-dd"), time, duration, organiser.id
+        );
+
+        MessageBox.Show(result.message);
+        
+        if (result.success)
+        {
+            this.Close();
         }
     }
-    catch (MySqlException ex) when (ex.Number == 1062)
-    {
-        MessageBox.Show("That venue already has an event at that date and time.");
-    }
-    catch (MySqlException ex)
-    {
-        MessageBox.Show(ex.Message);
-    }
-}
 }

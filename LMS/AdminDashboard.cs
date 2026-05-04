@@ -12,6 +12,7 @@ public partial class AdminDashboard : Form
         
     }
 
+    // Loads all relevant data when the dashboard initializes
     public void AdminDashboard_Load(object sender, EventArgs e)
     {
         getEvents();
@@ -20,48 +21,24 @@ public partial class AdminDashboard : Form
         loadAnalyticsTab();
     }
 
+    // Loads overall business performance analytics from the database
     private void loadAnalyticsTab()
     {
-        int totalUsers = 0;
-        int activeEvents = 0;
-        decimal totalRevenue = 0m;
-        int totalTicketsSold = 0;
-        
-        using (var connection = GlobalManager.GetConnection())
-        {
-            connection.Open();
-            string statsQuery = @"
-                SELECT 
-                    (SELECT COUNT(*) FROM users) as UsersCount,
-                    (SELECT COUNT(*) FROM events WHERE status = 'Approved') as EventsCount,
-                    (SELECT COALESCE(SUM(totalPrice), 0) FROM bookings WHERE status = 'Confirmed') as Revenue,
-                    (SELECT COALESCE(SUM(quantity), 0) FROM bookings WHERE status = 'Confirmed') as TicketsSold;
-            ";
-            
-            using (var cmd = new MySqlCommand(statsQuery, connection))
-            using (var reader = cmd.ExecuteReader())
-            {
-                if (reader.Read())
-                {
-                    totalUsers = Convert.ToInt32(reader["UsersCount"]);
-                    activeEvents = Convert.ToInt32(reader["EventsCount"]);
-                    totalRevenue = Convert.ToDecimal(reader["Revenue"]);
-                    totalTicketsSold = Convert.ToInt32(reader["TicketsSold"]);
-                }
-            }
-        }
+        var admin = (Admin)GlobalManager.CurrentUser!;
+        var stats = admin.getAnalyticsStats();
 
         string analyticsText = $"Overall Business Performance\n\n" +
-                               $"Total Users: {totalUsers}\n" +
-                               $"Approved Events: {activeEvents}\n" +
-                               $"Total Tickets Sold: {totalTicketsSold}\n" +
-                               $"Total Net Revenue: £{totalRevenue:F2}";
+                               $"Total Users: {stats.totalUsers}\n" +
+                               $"Approved Events: {stats.activeEvents}\n" +
+                               $"Total Tickets Sold: {stats.totalTicketsSold}\n" +
+                               $"Total Net Revenue: £{stats.totalRevenue:F2}";
 
         lblAnalytics.Text = analyticsText;
         
         ThemeManager.ApplyTheme(this);
     }
 
+    // Retrieves all non-admin users and binds them to the data grid
     public void loadAllUsers()
     {
         var admin = (Admin)GlobalManager.CurrentUser;
@@ -76,6 +53,7 @@ public partial class AdminDashboard : Form
         
     }
 
+    // Retrieves all events and binds them to the events data grid
     public void getEvents()
     {
         var admin = (Admin)GlobalManager.CurrentUser;
@@ -99,6 +77,7 @@ public partial class AdminDashboard : Form
     }
     
 
+    // Logs the current user out and returns to the login screen
     private void buttonLogoutShared_Click(object sender, EventArgs e)
     {
         GlobalManager.clearCurrentUser();
@@ -107,6 +86,7 @@ public partial class AdminDashboard : Form
         this.Hide();
     }
     
+    // Opens the profile editing form to allow user detail modifications
     private void buttonEditProfile_Click(object sender, EventArgs e)
     {
         EditProfileForm editProfileForm = new EditProfileForm();
@@ -120,6 +100,7 @@ public partial class AdminDashboard : Form
 
 
 
+    // Adds a new venue to the system with name, address, and capacity details
     private void button1_Click(object sender, EventArgs e)
     {
         string name = textBox1.Text.Trim();
@@ -131,7 +112,7 @@ public partial class AdminDashboard : Form
             MessageBox.Show("Please fill all fields");
             return;
         }
-        if (!int.TryParse(capacity, out int Capacity) || Capacity <= 0)
+        if (!int.TryParse(capacity, out int capacityValue) || capacityValue <= 0)
         {
             MessageBox.Show("Capacity must be a positive whole number.");
             return;
@@ -142,36 +123,20 @@ public partial class AdminDashboard : Form
             return;
         }
 
-        try
+        var admin = (Admin)GlobalManager.CurrentUser!;
+        var result = admin.addVenue(name, address, capacityValue);
+        
+        MessageBox.Show(result.message);
+        
+        if (result.success)
         {
-            using (MySqlConnection connection = GlobalManager.GetConnection())
-            {
-                connection.Open();
-                string query = @"INSERT INTO Venues (name, address, capacity) values (@name, @address, @capacity)";
-                using (MySqlCommand command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@name", name);
-                    command.Parameters.AddWithValue("@address", address);
-                    command.Parameters.AddWithValue("@capacity", Capacity);
-                    
-                    int result = command.ExecuteNonQuery();
-                    if (result > 0)
-                    {
-                        MessageBox.Show("Successfully added Venues");
-                        AdminDashboard adminDashboard = new AdminDashboard();
-                        adminDashboard.Show();
-                        this.Hide();
-                    }
-                }
-
-            }
-        }
-        catch (MySqlException ex)
-        {
-            MessageBox.Show(ex.Message);
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.Show();
+            this.Hide();
         }
     }
 
+    // Rejects an event, cancelling related bookings and notifying customers
     private void button7_Click(object sender, EventArgs e)
     {
         if (dataGridView1.SelectedCells.Count == 0)
@@ -180,66 +145,36 @@ public partial class AdminDashboard : Form
             return;
         }
 
-        string currentStatus = dataGridView1.SelectedRows[0].Cells["status"].Value.ToString();
+        string currentStatus = dataGridView1.SelectedRows[0].Cells["status"].Value.ToString()!;
         int eventId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["eventId"].Value);
         int organiserId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["organiserId"].Value);
         string title = dataGridView1.SelectedRows[0].Cells["title"].Value?.ToString() ?? "";
-
 
         if (currentStatus == "Rejected")
         {
             MessageBox.Show("The event has already been rejected");
             return;
         }
+        
+        var admin = (Admin)GlobalManager.CurrentUser!;
+        
         if (currentStatus == "Approved")
         {
             if (MessageBox.Show("This event is already approved. Rejecting it will forcefully cancel it and send refund notifications to all buyers. Proceed?", "Confirm Rejection", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
-            
-            using (var connection = GlobalManager.GetConnection())
-            {
-                connection.Open();
-                
-                string getCustomersQuery = "SELECT DISTINCT customerId FROM bookings WHERE eventId = @eventId AND status = 'Confirmed'";
-                var customersToNotify = new List<int>();
-                using (var cmd = new MySqlCommand(getCustomersQuery, connection))
-                {
-                    cmd.Parameters.AddWithValue("@eventId", eventId);
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            customersToNotify.Add(Convert.ToInt32(reader["customerId"]));
-                        }
-                    }
-                }
-
-                foreach (var cid in customersToNotify)
-                {
-                    GlobalManager.sendNotification(cid, $"The event '{title}' has been cancelled by an administrator. A refund is processing.");
-                }
-
-                string updateBookings = "UPDATE bookings SET status = 'Cancelled' WHERE eventId = @eventId";
-                using (var cmd = new MySqlCommand(updateBookings, connection))
-                {
-                    cmd.Parameters.AddWithValue("@eventId", eventId);
-                    cmd.ExecuteNonQuery();
-                }
-            }
+            admin.rejectEventAndCancelBookings(eventId, title);
         }
         else
         {
             if (MessageBox.Show("Are you sure you want to reject this event?", "Confirm Rejection", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+            admin.updateEventStatus(eventId, "Rejected");
         }
-
-        var admin = (Admin)GlobalManager.CurrentUser;
-        
-        admin.updateEventStatus(eventId, "Rejected");
         
         GlobalManager.sendNotification(organiserId, $"Your event '{title}' has been rejected.");
         
         loadAnalyticsTab();
         getEvents();
     }
+    // Deletes the selected user and reloads the user list
     private void button4_Click(object sender, EventArgs e)
     {
         if (dataGridView2.SelectedCells.Count == 0)
@@ -260,6 +195,7 @@ public partial class AdminDashboard : Form
 
     }
     
+    // Approves a pending event and notifies the organiser
     private void button6_Click(object sender, EventArgs e)
     {
         if (dataGridView1.SelectedCells.Count == 0)
@@ -296,6 +232,7 @@ public partial class AdminDashboard : Form
 
     }
     
+    // Loads all available discount codes into the grid
     private void loadDiscounts()
     {
         var admin = (Admin)GlobalManager.CurrentUser;
@@ -310,6 +247,7 @@ public partial class AdminDashboard : Form
         dataGridView3.Columns["createdAt"].HeaderText = "Created";
     }
 
+    // Creates a new discount code based on user inputs
     private void buttonCreateDiscount_Click(object sender, EventArgs e)
     {
         string code = textBoxDiscountCode.Text.Trim();
@@ -328,6 +266,7 @@ public partial class AdminDashboard : Form
         }
     }
 
+    // Toggles the active status of a selected discount code
     private void buttonToggleDiscount_Click(object sender, EventArgs e)
     {
         if (dataGridView3.SelectedRows.Count == 0)
@@ -343,6 +282,7 @@ public partial class AdminDashboard : Form
         loadDiscounts();
     }
 
+    // Processes the form inputs to register a new admin user
     private void buttonAddAdmin_Click(object sender, EventArgs e)
     {
         string name = textBoxAdminName.Text.Trim();

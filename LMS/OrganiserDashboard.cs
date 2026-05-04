@@ -13,6 +13,7 @@ public partial class OrganiserDashboard : Form
 
 
 
+    // Initializes dashboard components and themes upon load
     private void OrganiserDashboard_Load(object sender, EventArgs e)
     {
         if (DesignMode) return;
@@ -24,6 +25,7 @@ public partial class OrganiserDashboard : Form
         ThemeManager.ApplyTheme(this);
     }
 
+    // Loads all events assigned to the current organiser
     private void loadMyevents()
     {
         var organiser = (Organiser)GlobalManager.CurrentUser;
@@ -47,6 +49,7 @@ public partial class OrganiserDashboard : Form
 
     }
     
+    // Fetches and displays unread notifications for the user
     private void loadNotifications()
     {
         var notifications = GlobalManager.getUnreadNotifications();
@@ -64,6 +67,7 @@ public partial class OrganiserDashboard : Form
         }
     }
 
+    // Marks displayed notifications as read and hides the notification panel
     private void buttonDismissNotifications_Click(object sender, EventArgs e)
     {
         var organiser = (Organiser)GlobalManager.CurrentUser;
@@ -71,16 +75,18 @@ public partial class OrganiserDashboard : Form
         panelNotifications.Visible = false;
     }
 
+    // Opens the profile editing form to allow user detail modifications
     private void buttonEditProfile_Click(object sender, EventArgs e)
     {
         EditProfileForm editProfileForm = new EditProfileForm();
         if (editProfileForm.ShowDialog() == DialogResult.OK)
         {
-            loadMyevents(); // Refresh in case profile info affects anything
+            loadMyevents();
             labelWelcome.Text = $"Welcome, {GlobalManager.UserName}!";
         }
     }
 
+    // Logs the user out and returns to the login screen
     private void button3_Click(object sender, EventArgs e)
     {
         GlobalManager.clearCurrentUser();
@@ -90,6 +96,7 @@ public partial class OrganiserDashboard : Form
 
     }
 
+    // Navigates to the Add Events form
     private void button2_Click(object sender, EventArgs e)
     {
 
@@ -100,6 +107,7 @@ public partial class OrganiserDashboard : Form
     }
     
 
+    // Opens the selected event in the Edit Event form
     private void buttonEditEvent_Click(object sender, EventArgs e)
     {
         if (dataGridViewEvents.SelectedRows.Count == 0)
@@ -117,6 +125,7 @@ public partial class OrganiserDashboard : Form
 
     }
 
+    // Displays the statistics and revenue of a selected event
     private void BtnStats_Click(object? sender, EventArgs e)
     {
         if (dataGridViewEvents.SelectedRows.Count == 0)
@@ -126,33 +135,16 @@ public partial class OrganiserDashboard : Form
         }
 
         int eventId = Convert.ToInt32(dataGridViewEvents.SelectedRows[0].Cells["eventId"].Value);
-        string title = dataGridViewEvents.SelectedRows[0].Cells["title"].Value.ToString();
-        string status = dataGridViewEvents.SelectedRows[0].Cells["status"].Value.ToString();
+        string title = dataGridViewEvents.SelectedRows[0].Cells["title"].Value.ToString()!;
+        string status = dataGridViewEvents.SelectedRows[0].Cells["status"].Value.ToString()!;
 
-        int ticketsSold = 0;
-        decimal moneyMade = 0m;
-
-        using (var connection = GlobalManager.GetConnection())
-        {
-            connection.Open();
-            string query = "SELECT SUM(quantity) as t, SUM(totalPrice) as m FROM bookings WHERE eventId = @eventId AND status = 'Confirmed'";
-            using (var cmd = new MySql.Data.MySqlClient.MySqlCommand(query, connection))
-            {
-                cmd.Parameters.AddWithValue("@eventId", eventId);
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        ticketsSold = reader["t"] != DBNull.Value ? Convert.ToInt32(reader["t"]) : 0;
-                        moneyMade = reader["m"] != DBNull.Value ? Convert.ToDecimal(reader["m"]) : 0m;
-                    }
-                }
-            }
-        }
+        var organiser = (Organiser)GlobalManager.CurrentUser!;
+        var stats = organiser.getEventStats(eventId);
         
-        MessageBox.Show($"Event: {title}\nStatus: {status}\n\nTickets Sold: {ticketsSold}\nTotal Revenue: £{moneyMade:F2}", "Event Analytics", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show($"Event: {title}\nStatus: {status}\n\nTickets Sold: {stats.ticketsSold}\nTotal Revenue: £{stats.moneyMade:F2}", "Event Analytics", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
+    // Cancels a selected event and notifies all affected ticket buyers
     private void BtnCancelEvent_Click(object? sender, EventArgs e)
     {
         if (dataGridViewEvents.SelectedRows.Count == 0)

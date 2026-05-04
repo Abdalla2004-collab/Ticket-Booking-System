@@ -14,6 +14,109 @@ public class Admin : User
         return new AdminDashboard();
     }
     
+    public (int totalUsers, int activeEvents, decimal totalRevenue, int totalTicketsSold) getAnalyticsStats()
+    {
+        int totalUsers = 0;
+        int activeEvents = 0;
+        decimal totalRevenue = 0m;
+        int totalTicketsSold = 0;
+        
+        using (var connection = GlobalManager.GetConnection())
+        {
+            connection.Open();
+            string statsQuery = @"
+                SELECT 
+                    (SELECT COUNT(*) FROM users WHERE isActive = 1) as UsersCount,
+                    (SELECT COUNT(*) FROM events WHERE status = 'Approved') as EventsCount,
+                    (SELECT COALESCE(SUM(b.totalPrice), 0) FROM bookings b JOIN users u ON b.customerId = u.id WHERE b.status = 'Confirmed' AND u.isActive = 1) as Revenue,
+                    (SELECT COALESCE(SUM(b.quantity), 0) FROM bookings b JOIN users u ON b.customerId = u.id WHERE b.status = 'Confirmed' AND u.isActive = 1) as TicketsSold;
+            ";
+            
+            using (var cmd = new MySqlCommand(statsQuery, connection))
+            using (var reader = cmd.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    totalUsers = Convert.ToInt32(reader["UsersCount"]);
+                    activeEvents = Convert.ToInt32(reader["EventsCount"]);
+                    totalRevenue = Convert.ToDecimal(reader["Revenue"]);
+                    totalTicketsSold = Convert.ToInt32(reader["TicketsSold"]);
+                }
+            }
+        }
+        return (totalUsers, activeEvents, totalRevenue, totalTicketsSold);
+    }
+    
+    public (bool success, string message) addVenue(string name, string address, int capacity)
+    {
+        try
+        {
+            using (MySqlConnection connection = GlobalManager.GetConnection())
+            {
+                connection.Open();
+                string query = @"INSERT INTO Venues (name, address, capacity) values (@name, @address, @capacity)";
+                using (MySqlCommand command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@name", name);
+                    command.Parameters.AddWithValue("@address", address);
+                    command.Parameters.AddWithValue("@capacity", capacity);
+                    
+                    int result = command.ExecuteNonQuery();
+                    if (result > 0)
+                    {
+                        return (true, "Successfully added Venues");
+                    }
+                    return (false, "Failed to add venue.");
+                }
+            }
+        }
+        catch (MySqlException ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    public void rejectEventAndCancelBookings(int eventId, string title)
+    {
+        using (var connection = GlobalManager.GetConnection())
+        {
+            connection.Open();
+            
+            string getCustomersQuery = "SELECT DISTINCT customerId FROM bookings WHERE eventId = @eventId AND status = 'Confirmed'";
+            var customersToNotify = new List<int>();
+            using (var cmd = new MySqlCommand(getCustomersQuery, connection))
+            {
+                cmd.Parameters.AddWithValue("@eventId", eventId);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        customersToNotify.Add(Convert.ToInt32(reader["customerId"]));
+                    }
+                }
+            }
+
+            foreach (var cid in customersToNotify)
+            {
+                GlobalManager.sendNotification(cid, $"The event '{title}' has been cancelled by an administrator. A refund is processing.");
+            }
+
+            string updateBookings = "UPDATE bookings SET status = 'Cancelled' WHERE eventId = @eventId";
+            using (var cmd = new MySqlCommand(updateBookings, connection))
+            {
+                cmd.Parameters.AddWithValue("@eventId", eventId);
+                cmd.ExecuteNonQuery();
+            }
+            
+            string updateEvent = "UPDATE events SET status = 'Rejected' WHERE eventId = @eventId";
+            using (var cmd = new MySqlCommand(updateEvent, connection))
+            {
+                cmd.Parameters.AddWithValue("@eventId", eventId);
+                cmd.ExecuteNonQuery();
+            }
+        }
+    }
+    
     public List<UserRow> getAllUsers()
     {
         var users = new List<UserRow>();

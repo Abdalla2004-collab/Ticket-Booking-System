@@ -13,6 +13,7 @@ public partial class LoginForm : Form
         ThemeManager.ApplyLargeTheme(this);
     }
 
+    // Authenticates the user and navigates them to their respective dashboard
     private void button1_Click(object sender, EventArgs e)
     {
         string email = textBox1.Text.Trim();
@@ -24,58 +25,24 @@ public partial class LoginForm : Form
             return;
         }
 
-        try
+        var authResult = GlobalManager.AuthenticateUser(email, password);
+        if (authResult.success)
         {
-            using (MySqlConnection connection = GlobalManager.GetConnection())
-            {
-                connection.Open();
-
-                string query = "SELECT id, fullname, email, password, role FROM users WHERE email = @email AND isActive = 1";
-
-                using (MySqlCommand command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@email", email);
-
-                    using (MySqlDataReader reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            string storedPassword = reader["password"].ToString();
-                            string fullname = reader["fullname"].ToString();
-                            string role = reader["role"].ToString();
-                            int id = Convert.ToInt32(reader["id"]);
-                        
-                            if (BCrypt.Net.BCrypt.Verify(password, storedPassword))
-                            {
-                                var user = GlobalManager.CreateUser(id, fullname, email, role);
-                                GlobalManager.setCurrentUser(user);
+            GlobalManager.setCurrentUser(authResult.user!);
                                 
-                                MessageBox.Show("Welcome, " + fullname + "!");
-                                this.Hide();
+            MessageBox.Show(authResult.message);
+            this.Hide();
 
-                                Form dashboard = GlobalManager.CurrentUser.getDashboard();
-                                dashboard.Show();   
-
-                            }
-                            else
-                            {
-                                MessageBox.Show("Invalid email or password.");
-                            }
-                        }
-                        else
-                        {
-                            MessageBox.Show("Invalid email or password.");
-                        }
-                    }
-                }
-            }
+            Form dashboard = GlobalManager.CurrentUser!.getDashboard();
+            dashboard.Show();   
         }
-        catch (Exception ex)
+        else
         {
-            MessageBox.Show("Error: " + ex.Message);
+            MessageBox.Show(authResult.message);
         }
     }
 
+    // Navigates to the registration form
     private void button2_Click(object sender, EventArgs e)
     {
         this.Hide();
