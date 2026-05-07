@@ -11,162 +11,212 @@ public partial class OrganiserDashboard : Form
         this.Load += OrganiserDashboard_Load;
     }
 
-
-
-    // Initializes dashboard components and themes upon load
     private void OrganiserDashboard_Load(object sender, EventArgs e)
     {
-        if (DesignMode) return;
-        labelWelcome.Text = "Welcome, " + GlobalManager.UserName;
-        loadMyevents();
-        loadNotifications();
-        
-
-        ThemeManager.ApplyTheme(this);
+        try
+        {
+            if (DesignMode) return;
+            labelWelcome.Text = "Welcome, " + GlobalManager.UserName;
+            loadMyevents();
+            loadNotifications();
+            ThemeManager.ApplyTheme(this);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
+        }
     }
 
-    // Loads all events assigned to the current organiser
     private void loadMyevents()
     {
-        var organiser = (Organiser)GlobalManager.CurrentUser;
-        var events = organiser.getEvents();
+        try
+        {
+            var organiser = (Organiser)GlobalManager.CurrentUser;
+            var events = organiser.getEvents();
 
-        dataGridViewEvents.DataSource = events;
+            dataGridViewEvents.DataSource = events;
 
-        dataGridViewEvents.Columns["eventId"].Visible = false;
-        dataGridViewEvents.Columns["venueId"].Visible = false;
-        dataGridViewEvents.Columns["organiserId"].Visible = false;
+            dataGridViewEvents.Columns["eventId"].Visible = false;
+            dataGridViewEvents.Columns["venueId"].Visible = false;
+            dataGridViewEvents.Columns["organiserId"].Visible = false;
 
-        dataGridViewEvents.Columns["title"].HeaderText = "Event Name";
-        dataGridViewEvents.Columns["category"].HeaderText = "Category";
-        dataGridViewEvents.Columns["eventDate"].HeaderText = "Date";
-        dataGridViewEvents.Columns["eventTime"].HeaderText = "Time";
-        dataGridViewEvents.Columns["totalTickets"].HeaderText = "Tickets";
-        dataGridViewEvents.Columns["price"].HeaderText = "Price";
-        dataGridViewEvents.Columns["status"].HeaderText = "Status";
-        dataGridViewEvents.Columns["venueName"].HeaderText = "Venue";
-        dataGridViewEvents.Columns["availableTickets"].HeaderText = "Available";
-
+            dataGridViewEvents.Columns["title"].HeaderText = "Event Name";
+            dataGridViewEvents.Columns["category"].HeaderText = "Category";
+            dataGridViewEvents.Columns["eventDate"].HeaderText = "Date";
+            dataGridViewEvents.Columns["eventTime"].HeaderText = "Time";
+            dataGridViewEvents.Columns["totalTickets"].HeaderText = "Tickets";
+            dataGridViewEvents.Columns["price"].HeaderText = "Price";
+            dataGridViewEvents.Columns["status"].HeaderText = "Status";
+            dataGridViewEvents.Columns["venueName"].HeaderText = "Venue";
+            dataGridViewEvents.Columns["availableTickets"].HeaderText = "Available";
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred loading events: " + ex.Message);
+        }
     }
     
-    // Fetches and displays unread notifications for the user
     private void loadNotifications()
     {
-        var notifications = GlobalManager.getUnreadNotifications();
+        try
+        {
+            var notifications = GlobalManager.getUnreadNotifications();
 
-        if (notifications.Count > 0)
-        {
-            string combined = string.Join("\n", 
-                notifications.ConvertAll(n => $"• {n.message}"));
-            labelNotificationText.Text = combined;
-            panelNotifications.Visible = true;
+            if (notifications.Count > 0)
+            {
+                string combined = string.Join("\n", 
+                    notifications.ConvertAll(n => $"• {n.message}"));
+                labelNotificationText.Text = combined;
+                panelNotifications.Visible = true;
+            }
+            else
+            {
+                panelNotifications.Visible = false;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            panelNotifications.Visible = false;
+            MessageBox.Show("An error occurred: " + ex.Message);
         }
     }
 
-    // Marks displayed notifications as read and hides the notification panel
     private void buttonDismissNotifications_Click(object sender, EventArgs e)
     {
-        var organiser = (Organiser)GlobalManager.CurrentUser;
-        organiser.markNotificationsRead();
-        panelNotifications.Visible = false;
+        try
+        {
+            var organiser = (Organiser)GlobalManager.CurrentUser;
+            organiser.markNotificationsRead();
+            panelNotifications.Visible = false;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
+        }
     }
 
-    // Opens the profile editing form to allow user detail modifications
     private void buttonEditProfile_Click(object sender, EventArgs e)
     {
-        EditProfileForm editProfileForm = new EditProfileForm();
-        if (editProfileForm.ShowDialog() == DialogResult.OK)
+        try
         {
-            loadMyevents();
-            labelWelcome.Text = $"Welcome, {GlobalManager.UserName}!";
+            EditProfileForm editProfileForm = new EditProfileForm();
+            if (editProfileForm.ShowDialog() == DialogResult.OK)
+            {
+                loadMyevents();
+                labelWelcome.Text = $"Welcome, {GlobalManager.UserName}!";
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
         }
     }
 
-    // Logs the user out and returns to the login screen
     private void button3_Click(object sender, EventArgs e)
     {
-        GlobalManager.clearCurrentUser();
-        this.Hide();
-        var loginForm = new LoginForm();
-        loginForm.Show();
-
+        try
+        {
+            GlobalManager.clearCurrentUser();
+            this.Hide();
+            var loginForm = new LoginForm();
+            loginForm.Show();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
+        }
     }
 
-    // Navigates to the Add Events form
     private void button2_Click(object sender, EventArgs e)
     {
-
-        var addEvents = new AddEvents();
-        addEvents.Show();
-        this.Hide();
-
+        try
+        {
+            var addEvents = new AddEvents();
+            addEvents.Show();
+            this.Hide();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
+        }
     }
-    
 
-    // Opens the selected event in the Edit Event form
     private void buttonEditEvent_Click(object sender, EventArgs e)
     {
-        if (dataGridViewEvents.SelectedRows.Count == 0)
+        try
         {
-            MessageBox.Show("Please select an event to edit.");
-            return;
+            if (dataGridViewEvents.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select an event to edit.");
+                return;
+            }
+
+            int eventId = Convert.ToInt32(
+                dataGridViewEvents.SelectedRows[0].Cells["eventId"].Value);
+
+            var editForm = new EditEvent(eventId);
+            editForm.ShowDialog();
+            loadMyevents();
         }
-
-        int eventId = Convert.ToInt32(
-            dataGridViewEvents.SelectedRows[0].Cells["eventId"].Value);
-
-        var editForm = new EditEvent(eventId);
-        editForm.ShowDialog();
-        loadMyevents();
-
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
+        }
     }
 
-    // Displays the statistics and revenue of a selected event
     private void BtnStats_Click(object? sender, EventArgs e)
     {
-        if (dataGridViewEvents.SelectedRows.Count == 0)
+        try
         {
-            MessageBox.Show("Please select an event to view stats.");
-            return;
+            if (dataGridViewEvents.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select an event to view stats.");
+                return;
+            }
+
+            int eventId = Convert.ToInt32(dataGridViewEvents.SelectedRows[0].Cells["eventId"].Value);
+            string title = dataGridViewEvents.SelectedRows[0].Cells["title"].Value.ToString()!;
+            string status = dataGridViewEvents.SelectedRows[0].Cells["status"].Value.ToString()!;
+
+            var organiser = (Organiser)GlobalManager.CurrentUser!;
+            var stats = organiser.getEventStats(eventId);
+            
+            MessageBox.Show($"Event: {title}\nStatus: {status}\n\nTickets Sold: {stats.ticketsSold}\nTotal Revenue: £{stats.moneyMade:F2}", "Event Analytics", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
-        int eventId = Convert.ToInt32(dataGridViewEvents.SelectedRows[0].Cells["eventId"].Value);
-        string title = dataGridViewEvents.SelectedRows[0].Cells["title"].Value.ToString()!;
-        string status = dataGridViewEvents.SelectedRows[0].Cells["status"].Value.ToString()!;
-
-        var organiser = (Organiser)GlobalManager.CurrentUser!;
-        var stats = organiser.getEventStats(eventId);
-        
-        MessageBox.Show($"Event: {title}\nStatus: {status}\n\nTickets Sold: {stats.ticketsSold}\nTotal Revenue: £{stats.moneyMade:F2}", "Event Analytics", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
+        }
     }
 
-    // Cancels a selected event and notifies all affected ticket buyers
     private void BtnCancelEvent_Click(object? sender, EventArgs e)
     {
-        if (dataGridViewEvents.SelectedRows.Count == 0)
+        try
         {
-            MessageBox.Show("Please select an event to cancel.");
-            return;
+            if (dataGridViewEvents.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select an event to cancel.");
+                return;
+            }
+
+            int eventId = Convert.ToInt32(dataGridViewEvents.SelectedRows[0].Cells["eventId"].Value);
+            string status = dataGridViewEvents.SelectedRows[0].Cells["status"].Value.ToString();
+
+            if (status == "Rejected")
+            {
+                MessageBox.Show("This event is already cancelled.");
+                return;
+            }
+
+            if (MessageBox.Show("Are you sure you want to cancel this event? All buyers will be notified.", "Confirm Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                var org = (Organiser)GlobalManager.CurrentUser;
+                org.cancelEvent(eventId);
+                loadMyevents();
+            }
         }
-
-        int eventId = Convert.ToInt32(dataGridViewEvents.SelectedRows[0].Cells["eventId"].Value);
-        string status = dataGridViewEvents.SelectedRows[0].Cells["status"].Value.ToString();
-
-        if (status == "Rejected")
+        catch (Exception ex)
         {
-            MessageBox.Show("This event is already cancelled.");
-            return;
-        }
-
-        if (MessageBox.Show("Are you sure you want to cancel this event? All buyers will be notified.", "Confirm Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-        {
-            var org = (Organiser)GlobalManager.CurrentUser;
-            org.cancelEvent(eventId);
-            loadMyevents();
+            MessageBox.Show("An error occurred: " + ex.Message);
         }
     }
 }

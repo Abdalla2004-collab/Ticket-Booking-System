@@ -33,6 +33,7 @@ partial class MyBookings
     {
         button1 = new System.Windows.Forms.Button();
         button2 = new System.Windows.Forms.Button();
+        buttonPrint = new System.Windows.Forms.Button();
         labelTitle = new System.Windows.Forms.Label();
         panelBottom = new System.Windows.Forms.Panel();
         tableLayoutPanelButtons = new System.Windows.Forms.TableLayoutPanel();
@@ -162,9 +163,10 @@ partial class MyBookings
         // 
         flowLayoutPanelButtons.Anchor = System.Windows.Forms.AnchorStyles.None;
         flowLayoutPanelButtons.AutoSize = true;
+        flowLayoutPanelButtons.Controls.Add(buttonPrint);
         flowLayoutPanelButtons.Controls.Add(button2);
         flowLayoutPanelButtons.Controls.Add(button1);
-        flowLayoutPanelButtons.Location = new System.Drawing.Point(344, 33);
+        flowLayoutPanelButtons.Location = new System.Drawing.Point(280, 33);
         flowLayoutPanelButtons.Name = "flowLayoutPanelButtons";
         flowLayoutPanelButtons.Size = new System.Drawing.Size(342, 54);
         flowLayoutPanelButtons.TabIndex = 0;
@@ -187,6 +189,15 @@ partial class MyBookings
         button2.TabIndex = 1;
         button2.Text = "Cancel Booking";
         button2.Click += button2_Click;
+        // 
+        // buttonPrint
+        // 
+        buttonPrint.Location = new System.Drawing.Point(360, 3);
+        buttonPrint.Name = "buttonPrint";
+        buttonPrint.Size = new System.Drawing.Size(158, 48);
+        buttonPrint.TabIndex = 2;
+        buttonPrint.Text = "Print Ticket";
+        buttonPrint.Click += buttonPrint_Click;
         // 
         // MyBookings
         // 
@@ -213,6 +224,7 @@ partial class MyBookings
 
     private System.Windows.Forms.Button button1;
     private System.Windows.Forms.Button button2;
+    private System.Windows.Forms.Button buttonPrint;
     private System.Windows.Forms.Label labelTitle;
     private System.Windows.Forms.Panel panelBottom;
     private System.Windows.Forms.TableLayoutPanel tableLayoutPanelButtons;

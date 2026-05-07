@@ -23,7 +23,7 @@ public class Customer : User
             connection.Open();
 
             string query = @"SELECT e.eventId, e.title, e.category, e.eventDate, e.eventTime, e.durationMinutes, e.price, e.status,
-                            v.name as venueName,
+                            v.name as venueName, v.address as venueAddress,
                             e.totalTickets - COALESCE((SELECT SUM(b.quantity) FROM bookings b Where b.eventId = e.eventId
                             AND b.status = 'Confirmed'), 0) as availableTickets FROM events e
                             JOIN venues v on e.venueId = v.venueId 
@@ -53,7 +53,8 @@ public class Customer : User
                             price = Convert.ToDecimal(reader["price"]),
                             status = reader["status"].ToString(),
                             venueName = reader["venueName"].ToString(),
-                            availableTickets = Convert.ToInt32(reader["availableTickets"])
+                            availableTickets = Convert.ToInt32(reader["availableTickets"]),
+                            venueAddress = reader["venueAddress"].ToString() ?? ""
                         });
                     }
                 }

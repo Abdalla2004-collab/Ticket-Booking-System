@@ -13,10 +13,17 @@ public partial class CustomerDashboard : Form
 
     private void CustomerDashboard_Load(object sender, EventArgs e)
     {
-        label1.Text = "Welcome, " + GlobalManager.UserName;
-        loadCategories();
-        loadEvents();
-        loadNotifications();
+        try
+        {
+            label1.Text = "Welcome, " + GlobalManager.UserName;
+            loadCategories();
+            loadEvents();
+            loadNotifications();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
+        }
     }
     private void loadCategories()
     {
@@ -31,60 +38,81 @@ public partial class CustomerDashboard : Form
 
     private void loadEvents()
     {
-        string searchTitle = textBox1.Text.Trim();
-        string filterCategory = comboBox1.SelectedItem?.ToString() ?? "";
+        try
+        {
+            string searchTitle = textBox1.Text.Trim();
+            string filterCategory = comboBox1.SelectedItem?.ToString() ?? "";
 
-        var customer = (Customer)GlobalManager.CurrentUser;
-        var events = customer.getApprovedEvents(searchTitle, filterCategory);
+            var customer = (Customer)GlobalManager.CurrentUser;
+            var events = customer.getApprovedEvents(searchTitle, filterCategory);
 
-        dataGridView1.DataSource = events;
+            dataGridView1.DataSource = events;
 
-        if (dataGridView1.Columns.Contains("eventId"))
-            dataGridView1.Columns["eventId"].Visible = false;
+            if (dataGridView1.Columns.Contains("eventId"))
+                dataGridView1.Columns["eventId"].Visible = false;
 
-        if (dataGridView1.Columns.Contains("venueId"))
-            dataGridView1.Columns["venueId"].Visible = false;
+            if (dataGridView1.Columns.Contains("venueId"))
+                dataGridView1.Columns["venueId"].Visible = false;
 
-        if (dataGridView1.Columns.Contains("organiserId"))
-            dataGridView1.Columns["organiserId"].Visible = false;
+            if (dataGridView1.Columns.Contains("organiserId"))
+                dataGridView1.Columns["organiserId"].Visible = false;
 
-        if (dataGridView1.Columns.Contains("status"))
-            dataGridView1.Columns["status"].Visible = false;
+            if (dataGridView1.Columns.Contains("status"))
+                dataGridView1.Columns["status"].Visible = false;
 
-        if (dataGridView1.Columns.Contains("totalTickets"))
-            dataGridView1.Columns["totalTickets"].Visible = false;
+            if (dataGridView1.Columns.Contains("totalTickets"))
+                dataGridView1.Columns["totalTickets"].Visible = false;
 
-        dataGridView1.Columns["title"].HeaderText = "Event";
-        dataGridView1.Columns["category"].HeaderText = "Category";
-        dataGridView1.Columns["eventDate"].HeaderText = "Date";
-        dataGridView1.Columns["eventTime"].HeaderText = "Time";
-        dataGridView1.Columns["price"].HeaderText = "Price (£)";
-        dataGridView1.Columns["venueName"].HeaderText = "Venue";
-        dataGridView1.Columns["availableTickets"].HeaderText = "Tickets Left";
+            dataGridView1.Columns["title"].HeaderText = "Event";
+            dataGridView1.Columns["category"].HeaderText = "Category";
+            dataGridView1.Columns["eventDate"].HeaderText = "Date";
+            dataGridView1.Columns["eventTime"].HeaderText = "Time";
+            dataGridView1.Columns["price"].HeaderText = "Price (£)";
+            dataGridView1.Columns["venueName"].HeaderText = "Venue";
+            dataGridView1.Columns["availableTickets"].HeaderText = "Tickets Left";
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred loading events: " + ex.Message);
+        }
     }
     
     private void loadNotifications()
     {
-        var notifications = GlobalManager.getUnreadNotifications();
+        try
+        {
+            var notifications = GlobalManager.getUnreadNotifications();
 
-        if (notifications.Count > 0)
-        {
-            string combined = string.Join("\n", 
-                notifications.ConvertAll(n => $"• {n.message}"));
-            labelNotificationText.Text = combined;
-            panelNotifications.Visible = true;
+            if (notifications.Count > 0)
+            {
+                string combined = string.Join("\n", 
+                    notifications.ConvertAll(n => $"• {n.message}"));
+                labelNotificationText.Text = combined;
+                panelNotifications.Visible = true;
+            }
+            else
+            {
+                panelNotifications.Visible = false;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            panelNotifications.Visible = false;
+            MessageBox.Show("An error occurred: " + ex.Message);
         }
     }
 
     private void buttonDismissNotifications_Click(object sender, EventArgs e)
     {
-        var customer = (Customer)GlobalManager.CurrentUser;
-        customer.markNotificationsRead();
-        panelNotifications.Visible = false;
+        try
+        {
+            var customer = (Customer)GlobalManager.CurrentUser;
+            customer.markNotificationsRead();
+            panelNotifications.Visible = false;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
+        }
     }
 
     private void label2_Click(object sender, EventArgs e)
@@ -104,56 +132,95 @@ public partial class CustomerDashboard : Form
 
     private void button1_Click(object sender, EventArgs e)
     {
-        loadEvents();
+        try
+        {
+            loadEvents();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
+        }
     }
 
     private void button3_Click(object sender, EventArgs e)
     {
-        var myBookings = new MyBookings();
-        myBookings.BookingsUpdated += () => loadEvents();
-        myBookings.BookingsUpdated += () => loadNotifications();
-        myBookings.ShowDialog();
+        try
+        {
+            var myBookings = new MyBookings();
+            myBookings.BookingsUpdated += () => loadEvents();
+            myBookings.BookingsUpdated += () => loadNotifications();
+            myBookings.ShowDialog();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
+        }
     }
 
     private void button2_Click(object sender, EventArgs e)
     {
-        if (dataGridView1.SelectedRows.Count == 0)
+        try
         {
-            MessageBox.Show("Please select an event to book.");
-            return;
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select an event to book.");
+                return;
+            }
+            
+            int eventId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["eventId"].Value);
+            int available = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["availableTickets"].Value);
+            decimal price = Convert.ToDecimal(dataGridView1.SelectedRows[0].Cells["price"].Value);
+            string title = dataGridView1.SelectedRows[0].Cells["title"].Value.ToString() ?? "";
+            string date = Convert.ToDateTime(dataGridView1.SelectedRows[0].Cells["eventDate"].Value).ToString("yyyy-MM-dd");
+            string time = dataGridView1.SelectedRows[0].Cells["eventTime"].Value.ToString() ?? "";
+            string venue = dataGridView1.SelectedRows[0].Cells["venueName"].Value.ToString() ?? "N/A";
+            string location = dataGridView1.SelectedRows[0].Cells["venueAddress"].Value.ToString() ?? "Venue Address";
+            
+            if (available <= 0)
+            {
+                MessageBox.Show("Sorry, this event is sold out.");
+                return;
+            }
+            
+            var bookForm = new BookEvent(eventId, title, price, available, date, time, venue, location);
+            bookForm.ShowDialog();
+            
+            loadEvents();
+            loadNotifications();
         }
-        
-        int eventId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["eventId"].Value);
-        int available = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["availableTickets"].Value);
-        decimal price = Convert.ToDecimal(dataGridView1.SelectedRows[0].Cells["price"].Value);
-        string title = dataGridView1.SelectedRows[0].Cells["title"].Value.ToString() ?? "";
-
-        if (available <= 0)
+        catch (Exception ex)
         {
-            MessageBox.Show("Sorry, this event is sold out.");
-            return;
+            MessageBox.Show("An error occurred: " + ex.Message);
         }
-        
-        var bookForm = new BookEvent(eventId, title, price, available);
-        bookForm.ShowDialog();
-        
-        loadEvents();
-        loadNotifications();
     }
 
     private void buttonEditProfile_Click(object sender, EventArgs e)
     {
-        EditProfileForm editProfileForm = new EditProfileForm();
-        if (editProfileForm.ShowDialog() == DialogResult.OK)
+        try
         {
-            loadEvents(); // Refresh in case profile info affects anything
+            EditProfileForm editProfileForm = new EditProfileForm();
+            if (editProfileForm.ShowDialog() == DialogResult.OK)
+            {
+                loadEvents();
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
         }
     }
 
     private void button4_Click_1(object sender, EventArgs e)
     {
-        GlobalManager.clearCurrentUser();
-        this.Hide();
-        new LoginForm().Show();
+        try
+        {
+            GlobalManager.clearCurrentUser();
+            this.Hide();
+            new LoginForm().Show();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
+        }
     }
 }

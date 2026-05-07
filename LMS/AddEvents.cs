@@ -12,122 +12,141 @@ public partial class AddEvents : Form
         this.Load += AddEvents_Load;
     }
 
-    // Initializes the Add Events form and loads necessary data
     private void AddEvents_Load(object sender, EventArgs e)
     {
-        dateTimePicker2.MinDate = DateTime.Today;
-        labelOrganiser.Text = "Organiser: " + GlobalManager.UserName;
-        loadVenues();
-        loadCategories();
-
-        if(comboBoxDuration.Items.Count == 0)
+        try
         {
-            comboBoxDuration.Items.AddRange(new object[] { 30, 60, 90, 120, 150, 180, 240 });
-            comboBoxDuration.SelectedIndex = 1;
+            dateTimePicker2.MinDate = DateTime.Today;
+            labelOrganiser.Text = "Organiser: " + GlobalManager.UserName;
+            loadVenues();
+            loadCategories();
+
+            if(comboBoxDuration.Items.Count == 0)
+            {
+                comboBoxDuration.Items.AddRange(new object[] { 30, 60, 90, 120, 150, 180, 240 });
+                comboBoxDuration.SelectedIndex = 1;
+            }
+
+            comboBoxVenue.SelectedIndexChanged += refreshAvailableTimes;
+            dateTimePicker2.ValueChanged += refreshAvailableTimes;
+            comboBoxDuration.SelectedIndexChanged += refreshAvailableTimes;
         }
-
-        comboBoxVenue.SelectedIndexChanged += refreshAvailableTimes;
-        dateTimePicker2.ValueChanged += refreshAvailableTimes;
-        comboBoxDuration.SelectedIndexChanged += refreshAvailableTimes;
-
-
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
     }
 
-    // Refreshes the available time slots based on venue and duration selections
     private void refreshAvailableTimes(object? sender, EventArgs e)
     {
-        if (comboBoxVenue.SelectedValue == null || comboBoxDuration.SelectedItem == null) return;
-        
-        int venueId = (int)comboBoxVenue.SelectedValue;
-        string dateStr = dateTimePicker2.Value.ToString("yyyy-MM-dd");
-        int duration = (int)comboBoxDuration.SelectedItem;
-
-        var organiser = (Organiser)GlobalManager.CurrentUser!;
-        var existingEvents = organiser.getExistingEventsForVenue(venueId, dateStr);
-
-        comboBoxTime.Items.Clear();
-        TimeSpan currentSlot = TimeSpan.FromHours(8);
-        TimeSpan endOfDay = TimeSpan.FromHours(22);
-
-        while (currentSlot < endOfDay)
+        try
         {
-            TimeSpan proposedEnd = currentSlot.Add(TimeSpan.FromMinutes(duration));
+            if (comboBoxVenue.SelectedValue == null || comboBoxDuration.SelectedItem == null) return;
             
-            if (proposedEnd > endOfDay)
-            {
-                currentSlot = currentSlot.Add(TimeSpan.FromMinutes(30));
-                continue;
-            }
+            int venueId = (int)comboBoxVenue.SelectedValue;
+            string dateStr = dateTimePicker2.Value.ToString("yyyy-MM-dd");
+            int duration = (int)comboBoxDuration.SelectedItem;
 
-            // Ensure we cannot book a slot in the past (if today)
-            if (dateTimePicker2.Value.Date == DateTime.Today && currentSlot <= DateTime.Now.TimeOfDay)
-            {
-                currentSlot = currentSlot.Add(TimeSpan.FromMinutes(30));
-                continue;
-            }
+            var organiser = (Organiser)GlobalManager.CurrentUser!;
+            var existingEvents = organiser.getExistingEventsForVenue(venueId, dateStr);
 
-            // Ensure we cannot book a slot on a past date
-            if (dateTimePicker2.Value.Date < DateTime.Today)
-            {
-                break;
-            }
+            comboBoxTime.Items.Clear();
+            TimeSpan currentSlot = TimeSpan.FromHours(8);
+            TimeSpan endOfDay = TimeSpan.FromHours(22);
 
-            bool overlap = false;
-            foreach (var ev in existingEvents)
+            while (currentSlot < endOfDay)
             {
-                TimeSpan evEnd = ev.start.Add(TimeSpan.FromMinutes(ev.dur));
-                if (currentSlot < evEnd && proposedEnd > ev.start)
+                TimeSpan proposedEnd = currentSlot.Add(TimeSpan.FromMinutes(duration));
+                
+                if (proposedEnd > endOfDay)
                 {
-                    overlap = true;
+                    currentSlot = currentSlot.Add(TimeSpan.FromMinutes(30));
+                    continue;
+                }
+
+                if (dateTimePicker2.Value.Date == DateTime.Today && currentSlot <= DateTime.Now.TimeOfDay)
+                {
+                    currentSlot = currentSlot.Add(TimeSpan.FromMinutes(30));
+                    continue;
+                }
+
+                if (dateTimePicker2.Value.Date < DateTime.Today)
+                {
                     break;
                 }
+
+                bool overlap = false;
+                foreach (var ev in existingEvents)
+                {
+                    TimeSpan evEnd = ev.start.Add(TimeSpan.FromMinutes(ev.dur));
+                    if (currentSlot < evEnd && proposedEnd > ev.start)
+                    {
+                        overlap = true;
+                        break;
+                    }
+                }
+
+                if (!overlap)
+                {
+                    comboBoxTime.Items.Add(currentSlot.ToString(@"hh\:mm"));
+                }
+
+                currentSlot = currentSlot.Add(TimeSpan.FromMinutes(30));
             }
 
-            if (!overlap)
+            if (comboBoxTime.Items.Count > 0)
             {
-                comboBoxTime.Items.Add(currentSlot.ToString(@"hh\:mm"));
+                comboBoxTime.SelectedIndex = 0;
+                comboBoxTime.Enabled = true;
             }
-
-            currentSlot = currentSlot.Add(TimeSpan.FromMinutes(30));
+            else
+            {
+                comboBoxTime.Items.Add("No slots");
+                comboBoxTime.SelectedIndex = 0;
+                comboBoxTime.Enabled = false;
+            }
         }
-
-        if (comboBoxTime.Items.Count > 0)
+        catch (Exception ex)
         {
-            comboBoxTime.SelectedIndex = 0;
-            comboBoxTime.Enabled = true;
-        }
-        else
-        {
-            comboBoxTime.Items.Add("No slots");
-            comboBoxTime.SelectedIndex = 0;
-            comboBoxTime.Enabled = false;
+            MessageBox.Show("An error occurred: " + ex.Message);
         }
     }
 
-    // Loads the available venues into the combo box
     private void loadVenues()
     {
-        var venues = GlobalManager.GetAvailableVenues();
-        comboBoxVenue.DisplayMember = "name";
-        comboBoxVenue.ValueMember   = "venueId";
-        comboBoxVenue.DataSource    = venues;
-        comboBoxVenue.SelectedIndexChanged -= comboBoxVenue_SelectedIndexChanged;
-        comboBoxVenue.SelectedIndexChanged += comboBoxVenue_SelectedIndexChanged;
-        
-        if (comboBoxVenue.Items.Count > 0)
-            comboBoxVenue_SelectedIndexChanged(null, EventArgs.Empty);
-    }
-
-    // Updates the tickets text box to the maximum capacity of the selected venue
-    private void comboBoxVenue_SelectedIndexChanged(object? sender, EventArgs e)
-    {
-        if (comboBoxVenue.SelectedItem is Venue v)
+        try
         {
-            textBoxTickets.Text = v.capacity.ToString();
+            var venues = GlobalManager.GetAvailableVenues();
+            comboBoxVenue.DisplayMember = "name";
+            comboBoxVenue.ValueMember   = "venueId";
+            comboBoxVenue.DataSource    = venues;
+            comboBoxVenue.SelectedIndexChanged -= comboBoxVenue_SelectedIndexChanged;
+            comboBoxVenue.SelectedIndexChanged += comboBoxVenue_SelectedIndexChanged;
+            
+            if (comboBoxVenue.Items.Count > 0)
+                comboBoxVenue_SelectedIndexChanged(null, EventArgs.Empty);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred loading venues: " + ex.Message);
         }
     }
 
-    // Loads predefined categories into the combo box
+    private void comboBoxVenue_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        try
+        {
+            if (comboBoxVenue.SelectedItem is Venue v)
+            {
+                textBoxTickets.Text = v.capacity.ToString();
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
+        }
+    }
+
     private void loadCategories()
     {
         comboBoxCategory.Items.AddRange(new string[]
@@ -138,77 +157,103 @@ public partial class AddEvents : Form
         comboBoxCategory.DropDownStyle = ComboBoxStyle.DropDownList;
     }
 
-
-
-    // Validates inputs and creates a new event request
     private void button2_Click(object sender, EventArgs e)
     {
-        string title = textBoxTitle.Text.Trim();
-        string category = comboBoxCategory.SelectedItem?.ToString() ?? "";
-        string date = dateTimePicker2.Value.ToString("yyyy-MM-dd");
-        string tickets = textBoxTickets.Text.Trim();
-        string price = textBoxPrice.Text.Trim();
-
-        if (title.Length == 0 || tickets.Length == 0 || price.Length == 0)
+        try
         {
-            MessageBox.Show("Please fill in all fields.");
-            return;
-        }
+            string title = textBoxTitle.Text.Trim();
+            string category = comboBoxCategory.SelectedItem?.ToString() ?? "";
+            string date = dateTimePicker2.Value.ToString("yyyy-MM-dd");
+            string tickets = textBoxTickets.Text.Trim();
+            string price = textBoxPrice.Text.Trim();
 
-        if (!int.TryParse(tickets, out int totalTickets) || totalTickets <= 0)
+            if (title.Length == 0 || tickets.Length == 0 || price.Length == 0 || comboBoxCategory.SelectedItem == null || comboBoxDuration.SelectedItem == null)
+            {
+                MessageBox.Show("Please fill in all fields.");
+                return;
+            }
+
+            if (!int.TryParse(tickets, out int totalTickets) || totalTickets <= 0)
+            {
+                MessageBox.Show("Tickets must be a positive whole number.");
+                return;
+            }
+
+            if (!decimal.TryParse(price, out decimal ticketPrice) || ticketPrice < 0)
+            {
+                MessageBox.Show("Price must be a valid positive number.");
+                return;
+            }
+
+            if (comboBoxVenue.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a venue.");
+                return;
+            }
+
+            int venueId = (int)comboBoxVenue.SelectedValue!;
+            int capacity = ((Venue)comboBoxVenue.SelectedItem).capacity;
+
+            if (totalTickets > capacity)
+            {
+                MessageBox.Show($"Tickets cannot exceed the venue's capacity of {capacity}.");
+                return;
+            }
+
+            if (comboBoxTime.SelectedItem == null || !comboBoxTime.Enabled || comboBoxTime.SelectedItem.ToString() == "No slots")
+            {
+                MessageBox.Show("Please select an available time slot.");
+                return;
+            }
+
+            TimeSpan selectedTime = TimeSpan.Parse(comboBoxTime.SelectedItem.ToString()!);
+            if (selectedTime < TimeSpan.FromHours(8) || selectedTime > TimeSpan.FromHours(22))
+            {
+                MessageBox.Show("Events must be scheduled between 08:00 and 22:00.");
+                return;
+            }
+
+            int duration = (int)comboBoxDuration.SelectedItem;
+            var organiser = (Organiser)GlobalManager.CurrentUser!;
+            var conflicts = organiser.getExistingEventsForVenue(venueId, date);
+            TimeSpan selectedEnd = selectedTime.Add(TimeSpan.FromMinutes(duration));
+            foreach (var conflict in conflicts)
+            {
+                TimeSpan confEnd = conflict.start.Add(TimeSpan.FromMinutes(conflict.dur));
+                if (selectedTime < confEnd && selectedEnd > conflict.start)
+                {
+                    MessageBox.Show("This time slot conflicts with another event.");
+                    return;
+                }
+            }
+
+            string time = comboBoxTime.SelectedItem.ToString() + ":00";
+            var result = organiser.addEvent(title, category, date, time, duration, totalTickets, ticketPrice, venueId, organiser.id);
+
+            MessageBox.Show(result.message);
+            
+            if (result.success)
+            {
+                this.Hide();
+                new OrganiserDashboard().Show();
+            }
+        }
+        catch (Exception ex)
         {
-            MessageBox.Show("Tickets must be a positive whole number.");
-            return;
+            MessageBox.Show(ex.Message);
         }
+    }
 
-        if (!decimal.TryParse(price, out decimal ticketPrice) || ticketPrice < 0)
-        {
-            MessageBox.Show("Price must be a valid positive number.");
-            return;
-        }
-
-        if (comboBoxVenue.SelectedItem == null)
-        {
-            MessageBox.Show("Please select a venue.");
-            return;
-        }
-
-        int venueId = (int)comboBoxVenue.SelectedValue!;
-        int capacity = ((Venue)comboBoxVenue.SelectedItem).capacity;
-
-        if (totalTickets > capacity)
-        {
-            MessageBox.Show($"Tickets cannot exceed the venue's capacity of {capacity}.");
-            return;
-        }
-
-        if (comboBoxTime.SelectedItem == null || !comboBoxTime.Enabled || comboBoxTime.SelectedItem.ToString() == "No slots")
-        {
-            MessageBox.Show("Please select an available time slot.");
-            return;
-        }
-
-        string time = comboBoxTime.SelectedItem.ToString() + ":00";
-        int duration = (int)comboBoxDuration.SelectedItem;
-
-        var organiser = (Organiser)GlobalManager.CurrentUser!;
-        var result = organiser.addEvent(title, category, date, time, duration, totalTickets, ticketPrice, venueId, organiser.id);
-
-        MessageBox.Show(result.message);
-        
-        if (result.success)
+    private void buttonBack_Click_1(object sender, EventArgs e)
+    {
+        try
         {
             this.Hide();
             new OrganiserDashboard().Show();
         }
-    }
-
-
-
-    // Navigates back to the Organiser Dashboard
-    private void buttonBack_Click_1(object sender, EventArgs e)
-    {
-        this.Hide();
-        new OrganiserDashboard().Show();
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
     }
 }

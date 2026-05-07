@@ -101,8 +101,12 @@ partial class AdminDashboard
         labelAdminConfirmPassword = new System.Windows.Forms.Label();
         textBoxAdminConfirmPassword = new System.Windows.Forms.TextBox();
         buttonAddAdmin = new System.Windows.Forms.Button();
+        flowLayoutPanelBottomButtons = new System.Windows.Forms.FlowLayoutPanel();
+        tableLayoutPanelBottom = new System.Windows.Forms.TableLayoutPanel();
         tabPage6.SuspendLayout();
         tableLayoutPanelTab6.SuspendLayout();
+        flowLayoutPanelBottomButtons.SuspendLayout();
+        tableLayoutPanelBottom.SuspendLayout();
         panelBottom.SuspendLayout();
         SuspendLayout();
         // 
@@ -653,35 +657,60 @@ partial class AdminDashboard
         buttonAddAdmin.TabIndex = 9;
         buttonAddAdmin.Text = "Create Admin";
         buttonAddAdmin.Click += buttonAddAdmin_Click;
+        // 
+        // buttonEditProfile
+        // 
+        buttonEditProfile.Location = new System.Drawing.Point(3, 3);
+        buttonEditProfile.Name = "buttonEditProfile";
+        buttonEditProfile.Size = new System.Drawing.Size(150, 50);
+        buttonEditProfile.TabIndex = 0;
+        buttonEditProfile.Text = "Edit Profile";
+        buttonEditProfile.Click += buttonEditProfile_Click;
+        // 
+        // buttonLogoutShared
+        // 
+        buttonLogoutShared.Location = new System.Drawing.Point(159, 3);
+        buttonLogoutShared.Name = "buttonLogoutShared";
+        buttonLogoutShared.Size = new System.Drawing.Size(150, 50);
+        buttonLogoutShared.TabIndex = 1;
+        buttonLogoutShared.Text = "Logout";
+        buttonLogoutShared.Click += buttonLogoutShared_Click;
+        // 
+        // flowLayoutPanelBottomButtons
+        // 
+        flowLayoutPanelBottomButtons.Anchor = System.Windows.Forms.AnchorStyles.None;
+        flowLayoutPanelBottomButtons.AutoSize = true;
+        flowLayoutPanelBottomButtons.Controls.Add(buttonEditProfile);
+        flowLayoutPanelBottomButtons.Controls.Add(buttonLogoutShared);
+        flowLayoutPanelBottomButtons.Location = new System.Drawing.Point(344, 25);
+        flowLayoutPanelBottomButtons.Name = "flowLayoutPanelBottomButtons";
+        flowLayoutPanelBottomButtons.Size = new System.Drawing.Size(312, 56);
+        flowLayoutPanelBottomButtons.TabIndex = 0;
+        flowLayoutPanelBottomButtons.WrapContents = false;
+        // 
+        // tableLayoutPanelBottom
+        // 
+        tableLayoutPanelBottom.ColumnCount = 3;
+        tableLayoutPanelBottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+        tableLayoutPanelBottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+        tableLayoutPanelBottom.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+        tableLayoutPanelBottom.RowCount = 1;
+        tableLayoutPanelBottom.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+        tableLayoutPanelBottom.Controls.Add(flowLayoutPanelBottomButtons, 1, 0);
+        tableLayoutPanelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
+        tableLayoutPanelBottom.Location = new System.Drawing.Point(0, 0);
+        tableLayoutPanelBottom.Name = "tableLayoutPanelBottom";
+        tableLayoutPanelBottom.Size = new System.Drawing.Size(1000, 100);
+        tableLayoutPanelBottom.TabIndex = 0;
+        // 
         // panelBottom
         // 
-        panelBottom.Controls.Add(buttonLogoutShared);
-        panelBottom.Controls.Add(buttonEditProfile);
+        panelBottom.Controls.Add(tableLayoutPanelBottom);
         panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
         panelBottom.Location = new System.Drawing.Point(0, 604);
         panelBottom.Name = "panelBottom";
         panelBottom.Size = new System.Drawing.Size(1000, 100);
         panelBottom.TabIndex = 2;
-        // 
-        // buttonLogoutShared
-        // 
-        buttonLogoutShared.Anchor = System.Windows.Forms.AnchorStyles.None;
-        buttonLogoutShared.Location = new System.Drawing.Point(510, 25);
-        buttonLogoutShared.Name = "buttonLogoutShared";
-        buttonLogoutShared.Size = new System.Drawing.Size(150, 50);
-        buttonLogoutShared.TabIndex = 0;
-        buttonLogoutShared.Text = "Logout";
-        buttonLogoutShared.Click += buttonLogoutShared_Click;
-        // 
-        // buttonEditProfile
-        // 
-        buttonEditProfile.Anchor = System.Windows.Forms.AnchorStyles.None;
-        buttonEditProfile.Location = new System.Drawing.Point(340, 25);
-        buttonEditProfile.Name = "buttonEditProfile";
-        buttonEditProfile.Size = new System.Drawing.Size(150, 50);
-        buttonEditProfile.TabIndex = 1;
-        buttonEditProfile.Text = "Edit Profile";
-        buttonEditProfile.Click += buttonEditProfile_Click;
         // 
         // labelDashboardTitle
         // 
@@ -728,6 +757,10 @@ partial class AdminDashboard
         tabPage6.ResumeLayout(false);
         tableLayoutPanelTab6.ResumeLayout(false);
         tableLayoutPanelTab6.PerformLayout();
+        flowLayoutPanelBottomButtons.ResumeLayout(false);
+        flowLayoutPanelBottomButtons.PerformLayout();
+        tableLayoutPanelBottom.ResumeLayout(false);
+        tableLayoutPanelBottom.PerformLayout();
         panelBottom.ResumeLayout(false);
         ResumeLayout(false);
     }
@@ -751,6 +784,8 @@ partial class AdminDashboard
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.TabPage tabPage2;
     private System.Windows.Forms.Panel panelBottom;
+    private System.Windows.Forms.TableLayoutPanel tableLayoutPanelBottom;
+    private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelBottomButtons;
     private System.Windows.Forms.Button buttonLogoutShared;
     private System.Windows.Forms.Button buttonEditProfile;
     private System.Windows.Forms.Label labelDashboardTitle;

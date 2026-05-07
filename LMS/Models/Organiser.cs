@@ -24,12 +24,12 @@ public class Organiser : User
 
             string query = @"SELECT e.eventId, e.title, e.category, e.eventDate,
                                     e.eventTime, e.durationMinutes, e.totalTickets, e.price, e.status,
-                                    v.name AS venueName,
+                                    v.name AS venueName, v.address AS venueAddress,
                                     e.totalTickets - COALESCE((SELECT SUM(b.quantity) FROM bookings b WHERE b.eventId = e.eventId AND b.status = 'Confirmed'), 0) as availableTickets
                              FROM events e
                              JOIN venues v ON e.venueId = v.venueId
                              WHERE e.organiserId = @organiserId
-                             ORDER BY e.eventDate ASC";
+                             ORDER BY CASE WHEN e.status = 'Approved' THEN 0 WHEN e.status = 'Pending' THEN 1 ELSE 2 END, e.eventDate ASC";
 
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
@@ -51,7 +51,8 @@ public class Organiser : User
                             price        = Convert.ToDecimal(reader["price"]),
                             status       = reader["status"].ToString()!,
                             venueName    = reader["venueName"].ToString()!,
-                            availableTickets = Convert.ToInt32(reader["availableTickets"])
+                            availableTickets = Convert.ToInt32(reader["availableTickets"]),
+                            venueAddress = reader["venueAddress"].ToString() ?? ""
                         });
                     }
                 }

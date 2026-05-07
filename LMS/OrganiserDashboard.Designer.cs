@@ -126,7 +126,7 @@ partial class OrganiserDashboard
         panelBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
         panelBottom.Location = new System.Drawing.Point(0, 809);
         panelBottom.Name = "panelBottom";
-        panelBottom.Size = new System.Drawing.Size(1304, 200);
+        panelBottom.Size = new System.Drawing.Size(1304, 120);
         panelBottom.TabIndex = 21;
         // 
         // tableLayoutPanelButtons
@@ -141,7 +141,7 @@ partial class OrganiserDashboard
         tableLayoutPanelButtons.Name = "tableLayoutPanelButtons";
         tableLayoutPanelButtons.RowCount = 1;
         tableLayoutPanelButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-        tableLayoutPanelButtons.Size = new System.Drawing.Size(1304, 200);
+        tableLayoutPanelButtons.Size = new System.Drawing.Size(1304, 120);
         tableLayoutPanelButtons.TabIndex = 0;
         // 
         // flowLayoutPanelButtons
@@ -154,7 +154,7 @@ partial class OrganiserDashboard
         flowLayoutPanelButtons.Controls.Add(buttonEditEvent);
         flowLayoutPanelButtons.Controls.Add(buttonEditProfile);
         flowLayoutPanelButtons.Controls.Add(button3);
-        flowLayoutPanelButtons.Location = new System.Drawing.Point(112, 72);
+        flowLayoutPanelButtons.Location = new System.Drawing.Point(112, 32);
         flowLayoutPanelButtons.Name = "flowLayoutPanelButtons";
         flowLayoutPanelButtons.Size = new System.Drawing.Size(1080, 56);
         flowLayoutPanelButtons.TabIndex = 0;

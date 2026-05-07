@@ -13,41 +13,53 @@ public partial class LoginForm : Form
         ThemeManager.ApplyLargeTheme(this);
     }
 
-    // Authenticates the user and navigates them to their respective dashboard
     private void button1_Click(object sender, EventArgs e)
     {
-        string email = textBox1.Text.Trim();
-        string password = textBox2.Text.Trim();
-
-        if (email == "" || password == "")
+        try
         {
-            MessageBox.Show("Email and password required.");
-            return;
-        }
+            string email = textBox1.Text.Trim();
+            string password = textBox2.Text.Trim();
 
-        var authResult = GlobalManager.AuthenticateUser(email, password);
-        if (authResult.success)
-        {
-            GlobalManager.setCurrentUser(authResult.user!);
+            if (email == "" || password == "")
+            {
+                MessageBox.Show("Email and password required.");
+                return;
+            }
+
+            var authResult = GlobalManager.AuthenticateUser(email, password);
+            if (authResult.success)
+            {
+                GlobalManager.setCurrentUser(authResult.user!);
                                 
-            MessageBox.Show(authResult.message);
-            this.Hide();
+                MessageBox.Show(authResult.message);
+                this.Hide();
 
-            Form dashboard = GlobalManager.CurrentUser!.getDashboard();
-            dashboard.Show();   
+                Form dashboard = GlobalManager.CurrentUser!.getDashboard();
+                dashboard.Show();   
+            }
+            else
+            {
+                MessageBox.Show(authResult.message);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            MessageBox.Show(authResult.message);
+            MessageBox.Show("An error occurred: " + ex.Message);
         }
     }
 
-    // Navigates to the registration form
     private void button2_Click(object sender, EventArgs e)
     {
-        this.Hide();
-        Resgistration registration = new Resgistration();
-        registration.Show();
+        try
+        {
+            this.Hide();
+            Resgistration registration = new Resgistration();
+            registration.Show();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("An error occurred: " + ex.Message);
+        }
     }
 
 }

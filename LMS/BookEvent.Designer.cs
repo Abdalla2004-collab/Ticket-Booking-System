@@ -109,20 +109,20 @@ partial class BookEvent
         // 
         // button1
         // 
-        button1.AutoSize = true;
-        button1.Location = new System.Drawing.Point(3, 3);
+        button1.AutoSize = false;
+        button1.Location = new System.Drawing.Point(189, 3);
         button1.Name = "button1";
-        button1.Size = new System.Drawing.Size(200, 55);
+        button1.Size = new System.Drawing.Size(180, 60);
         button1.TabIndex = 5;
         button1.Text = "Confirm";
         button1.Click += button1_Click;
         // 
         // button3
         // 
-        button3.AutoSize = true;
-        button3.Location = new System.Drawing.Point(149, 3);
+        button3.AutoSize = false;
+        button3.Location = new System.Drawing.Point(375, 3);
         button3.Name = "button3";
-        button3.Size = new System.Drawing.Size(140, 55);
+        button3.Size = new System.Drawing.Size(180, 60);
         button3.TabIndex = 7;
         button3.Text = "Cancel";
         button3.Click += button3_Click_1;
@@ -148,10 +148,10 @@ partial class BookEvent
         // 
         // buttonApplyDiscount
         // 
-        buttonApplyDiscount.AutoSize = true;
-        buttonApplyDiscount.Location = new System.Drawing.Point(643, 293);
+        buttonApplyDiscount.AutoSize = false;
+        buttonApplyDiscount.Location = new System.Drawing.Point(3, 3);
         buttonApplyDiscount.Name = "buttonApplyDiscount";
-        buttonApplyDiscount.Size = new System.Drawing.Size(120, 55);
+        buttonApplyDiscount.Size = new System.Drawing.Size(180, 60);
         buttonApplyDiscount.TabIndex = 10;
         buttonApplyDiscount.Text = "Apply";
         buttonApplyDiscount.Click += buttonApplyDiscount_Click;
@@ -211,7 +211,6 @@ partial class BookEvent
         tableLayoutPanelMain.Controls.Add(label4, 1, 3);
         tableLayoutPanelMain.Controls.Add(flowLayoutPanelQty, 1, 4);
         tableLayoutPanelMain.Controls.Add(textBoxDiscountCode, 1, 5);
-        tableLayoutPanelMain.Controls.Add(buttonApplyDiscount, 2, 5);
         tableLayoutPanelMain.Controls.Add(labelDiscountStatus, 1, 6);
         tableLayoutPanelMain.Controls.Add(labelSubtotal, 1, 7);
         tableLayoutPanelMain.Controls.Add(labelDiscountAmount, 1, 8);
@@ -246,9 +245,10 @@ partial class BookEvent
         // 
         flowLayoutPanelButtons.Anchor = System.Windows.Forms.AnchorStyles.None;
         flowLayoutPanelButtons.AutoSize = true;
+        flowLayoutPanelButtons.Controls.Add(buttonApplyDiscount);
         flowLayoutPanelButtons.Controls.Add(button1);
         flowLayoutPanelButtons.Controls.Add(button3);
-        flowLayoutPanelButtons.Location = new System.Drawing.Point(254, 30);
+        flowLayoutPanelButtons.Location = new System.Drawing.Point(120, 30);
         flowLayoutPanelButtons.Name = "flowLayoutPanelButtons";
         flowLayoutPanelButtons.Size = new System.Drawing.Size(292, 56);
         flowLayoutPanelButtons.TabIndex = 0;

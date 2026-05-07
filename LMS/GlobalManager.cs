@@ -3,6 +3,9 @@ using dotenv.net;
 using LMS.Models;
 using MySql.Data.MySqlClient;
 using BCrypt.Net;
+using System.Drawing;
+using System.Drawing.Printing;
+using System.Windows.Forms;
 namespace LMS;
 
 public static class GlobalManager
@@ -117,20 +120,31 @@ public static class GlobalManager
 
     public static bool UpdateUserProfile(string name, string email, string password = "")
     {
+        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email))
+        {
+            MessageBox.Show("Name and Email cannot be empty.");
+            return false;
+        }
         try
         {
             using (MySqlConnection connection = GetConnection())
             {
                 connection.Open();
-                string query;
-                if (!string.IsNullOrEmpty(password))
+                
+                string checkQuery = "SELECT COUNT(*) FROM users WHERE email = @email AND id != @userId";
+                using (MySqlCommand checkCmd = new MySqlCommand(checkQuery, connection))
                 {
-                    query = "UPDATE users SET fullname = @name, email = @email, password = @password WHERE id = @userId";
+                    checkCmd.Parameters.AddWithValue("@email", email);
+                    checkCmd.Parameters.AddWithValue("@userId", UserId);
+                    if (Convert.ToInt32(checkCmd.ExecuteScalar()) > 0)
+                    {
+                        return false;
+                    }
                 }
-                else
-                {
-                    query = "UPDATE users SET fullname = @name, email = @email WHERE id = @userId";
-                }
+
+                string query = !string.IsNullOrEmpty(password)
+                    ? "UPDATE users SET fullname = @name, email = @email, password = @password WHERE id = @userId"
+                    : "UPDATE users SET fullname = @name, email = @email WHERE id = @userId";
 
                 using (MySqlCommand command = new MySqlCommand(query, connection))
                 {
@@ -139,24 +153,19 @@ public static class GlobalManager
                     command.Parameters.AddWithValue("@userId", UserId);
                     if (!string.IsNullOrEmpty(password))
                     {
-                        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
-                        command.Parameters.AddWithValue("@password", hashedPassword);
+                        command.Parameters.AddWithValue("@password", BCrypt.Net.BCrypt.HashPassword(password));
                     }
 
-                    int result = command.ExecuteNonQuery();
-                    if (result > 0)
-                    {
-                        ReloadCurrentUser();
-                        return true;
-                    }
+                    command.ExecuteNonQuery();
+                    ReloadCurrentUser();
+                    return true;
                 }
             }
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Failed to update profile: {ex.Message}");
+            throw new Exception("Profile update failed: " + ex.Message);
         }
-        return false;
     }
 
     public static void ReloadCurrentUser()
@@ -315,5 +324,69 @@ public static class GlobalManager
             }
         }
         return venues;
+    }
+
+    public static void PrintTicket(string title, string date, string time, int qty, decimal total, string venue, string location)
+    {
+        PrintDocument pd = new PrintDocument();
+        pd.DocumentName = $"Ticket_{title.Replace(" ", "_")}_{date}";
+        
+        pd.PrintPage += (sender, e) =>
+        {
+            Graphics g = e.Graphics!;
+            Font titleFont = new Font("Segoe UI", 24, FontStyle.Bold);
+            Font bodyFont = new Font("Segoe UI", 14);
+            Font smallFont = new Font("Segoe UI", 10);
+
+            float y = 40;
+            g.DrawString("EVENT TICKET", titleFont, Brushes.Black, 40, y);
+            y += 60;
+            g.DrawLine(Pens.Black, 40, y, 500, y);
+            y += 20;
+
+            g.DrawString($"Event: {title}", bodyFont, Brushes.Black, 40, y);
+            y += 40;
+            g.DrawString($"Venue: {venue}", bodyFont, Brushes.Black, 40, y);
+            y += 40;
+            g.DrawString($"Location: {location}", bodyFont, Brushes.Black, 40, y);
+            y += 40;
+            g.DrawString($"Date: {date}", bodyFont, Brushes.Black, 40, y);
+            y += 40;
+            g.DrawString($"Time: {time}", bodyFont, Brushes.Black, 40, y);
+            y += 40;
+            g.DrawString($"Quantity: {qty} ticket(s)", bodyFont, Brushes.Black, 40, y);
+            y += 40;
+            g.DrawString($"Total Paid: £{total:F2}", bodyFont, Brushes.Black, 40, y);
+            
+            // Draw Fake QR Code
+            float qrX = 550;
+            float qrY = 40;
+            float blockSize = 10;
+            Random rnd = new Random(title.GetHashCode() + date.GetHashCode());
+            for (int row = 0; row < 10; row++)
+            {
+                for (int col = 0; col < 10; col++)
+                {
+                    if (rnd.Next(2) == 0)
+                        g.FillRectangle(Brushes.Black, qrX + (col * blockSize), qrY + (row * blockSize), blockSize, blockSize);
+                }
+            }
+            g.DrawRectangle(Pens.Black, qrX, qrY, 100, 100);
+
+            y += 60;
+
+            g.DrawLine(Pens.Black, 40, y, 500, y);
+            y += 20;
+            g.DrawString("Please present this ticket at the venue entrance.", smallFont, Brushes.Gray, 40, y);
+            y += 20;
+            g.DrawString($"Generated on: {DateTime.Now:f}", smallFont, Brushes.Gray, 40, y);
+        };
+
+        PrintDialog pdialog = new PrintDialog();
+        pdialog.Document = pd;
+        if (pdialog.ShowDialog() == DialogResult.OK)
+        {
+            pd.Print();
+        }
     }
 }

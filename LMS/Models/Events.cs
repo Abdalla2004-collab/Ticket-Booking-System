@@ -15,4 +15,5 @@ public class Events
     public string   venueName        { get; set; } = "";
     public int      organiserId      { get; set; }
     public int      availableTickets { get; set; }
+    public string   venueAddress     { get; set; } = "";
 }
